@@ -213,10 +213,11 @@ class StreamDeckApp:
         self.public_url = ""
         self.local_ip = get_local_ip()
         self.local_url = f"http://{self.local_ip}:{PORT}"
-        self.current_qr_target = "public"
+        self.current_qr_target = "local"
         self.qr_photo = None
 
         self.build_ui()
+        self.switch_qr("local")
         self.start_server()
         self.start_tunnel_thread()
 
@@ -314,43 +315,9 @@ class StreamDeckApp:
         conn_frame = tk.Frame(body_frame, bg="#0d1117")
         conn_frame.pack(side="right", fill="both", expand=True)
 
-        # TARJETA 1: ENLACE PÚBLICO REMOTO (CLOUDFLARE)
-        card1 = tk.Frame(conn_frame, bg="#161b22", padx=16, pady=14, highlightbackground="#30363d", highlightthickness=1)
-        card1.pack(fill="x", pady=(0, 14))
-
-        card1_top = tk.Frame(card1, bg="#161b22")
-        card1_top.pack(fill="x", pady=(0, 4))
-
-        lbl_c1_title = tk.Label(card1_top, text="☁️ Enlace Remoto / Internet", font=("Segoe UI", 12, "bold"), fg="#58a6ff", bg="#161b22")
-        lbl_c1_title.pack(side="left")
-
-        lbl_c1_rec = tk.Label(card1_top, text="RECOMENDADO", font=("Segoe UI", 8, "bold"), fg="#3fb950", bg="#161b22")
-        lbl_c1_rec.pack(side="right")
-
-        lbl_c1_desc = tk.Label(card1, text="Funciona desde cualquier red o dispositivo sin configurar el router:", font=("Segoe UI", 9), fg="#8b949e", bg="#161b22")
-        lbl_c1_desc.pack(anchor="w", pady=(0, 8))
-
-        # URL Entry Remoto
-        url_box1 = tk.Frame(card1, bg="#21262d", padx=8, pady=6, highlightbackground="#30363d", highlightthickness=1)
-        url_box1.pack(fill="x", pady=(0, 10))
-
-        self.url_pub_var = tk.StringVar(value="Generando enlace seguro...")
-        self.entry_pub = tk.Entry(url_box1, textvariable=self.url_pub_var, font=("Consolas", 11, "bold"), fg="#3fb950", bg="#21262d", bd=0, readonlybackground="#21262d", state="readonly")
-        self.entry_pub.pack(fill="x")
-
-        # Botones Remoto
-        b1_frame = tk.Frame(card1, bg="#161b22")
-        b1_frame.pack(fill="x")
-
-        self.btn_copy_pub = tk.Button(b1_frame, text="📋 Copiar Enlace", font=("Segoe UI", 9, "bold"), bg="#238636", fg="#ffffff", activebackground="#2ea043", activeforeground="#ffffff", bd=0, padx=12, pady=6, cursor="hand2", command=self.copy_pub_url)
-        self.btn_copy_pub.pack(side="left", padx=(0, 8))
-
-        self.btn_open_pub = tk.Button(b1_frame, text="🌐 Abrir en esta PC", font=("Segoe UI", 9), bg="#21262d", fg="#c9d1d9", activebackground="#30363d", activeforeground="#ffffff", bd=0, padx=12, pady=6, cursor="hand2", command=self.open_pub_browser)
-        self.btn_open_pub.pack(side="left")
-
-        # TARJETA 2: RED LOCAL WI-FI
+        # TARJETA 1: RED LOCAL WI-FI (RECOMENDADO EN CASA)
         card2 = tk.Frame(conn_frame, bg="#161b22", padx=16, pady=14, highlightbackground="#30363d", highlightthickness=1)
-        card2.pack(fill="x")
+        card2.pack(fill="x", pady=(0, 14))
 
         card2_top = tk.Frame(card2, bg="#161b22")
         card2_top.pack(fill="x", pady=(0, 4))
@@ -358,7 +325,10 @@ class StreamDeckApp:
         lbl_c2_title = tk.Label(card2_top, text="📶 Conexión Red Local (Wi-Fi)", font=("Segoe UI", 12, "bold"), fg="#7ee787", bg="#161b22")
         lbl_c2_title.pack(side="left")
 
-        lbl_c2_desc = tk.Label(card2, text="Si tu tablet y la PC están conectadas a la misma red Wi-Fi:", font=("Segoe UI", 9), fg="#8b949e", bg="#161b22")
+        lbl_c2_rec = tk.Label(card2_top, text="RECOMENDADO (SIN LAG)", font=("Segoe UI", 8, "bold"), fg="#3fb950", bg="#161b22")
+        lbl_c2_rec.pack(side="right")
+
+        lbl_c2_desc = tk.Label(card2, text="Ideal si tu tablet y la PC están en el mismo Wi-Fi (conexión directa e instantánea):", font=("Segoe UI", 9), fg="#8b949e", bg="#161b22")
         lbl_c2_desc.pack(anchor="w", pady=(0, 8))
 
         # URL Entry Local
@@ -373,11 +343,45 @@ class StreamDeckApp:
         b2_frame = tk.Frame(card2, bg="#161b22")
         b2_frame.pack(fill="x")
 
-        self.btn_copy_loc = tk.Button(b2_frame, text="📋 Copiar IP Local", font=("Segoe UI", 9), bg="#21262d", fg="#c9d1d9", activebackground="#30363d", activeforeground="#ffffff", bd=0, padx=12, pady=6, cursor="hand2", command=self.copy_loc_url)
+        self.btn_copy_loc = tk.Button(b2_frame, text="📋 Copiar IP Local", font=("Segoe UI", 9, "bold"), bg="#238636", fg="#ffffff", activebackground="#2ea043", activeforeground="#ffffff", bd=0, padx=12, pady=6, cursor="hand2", command=self.copy_loc_url)
         self.btn_copy_loc.pack(side="left", padx=(0, 8))
 
-        self.btn_open_loc = tk.Button(b2_frame, text="🌐 Probar Localmente", font=("Segoe UI", 9), bg="#21262d", fg="#c9d1d9", activebackground="#30363d", activeforeground="#ffffff", bd=0, padx=12, pady=6, cursor="hand2", command=self.open_loc_browser)
+        self.btn_open_loc = tk.Button(b2_frame, text="🌐 Abrir en esta PC", font=("Segoe UI", 9), bg="#21262d", fg="#c9d1d9", activebackground="#30363d", activeforeground="#ffffff", bd=0, padx=12, pady=6, cursor="hand2", command=self.open_loc_browser)
         self.btn_open_loc.pack(side="left")
+
+        # TARJETA 2: ENLACE PÚBLICO REMOTO (CLOUDFLARE)
+        card1 = tk.Frame(conn_frame, bg="#161b22", padx=16, pady=14, highlightbackground="#30363d", highlightthickness=1)
+        card1.pack(fill="x")
+
+        card1_top = tk.Frame(card1, bg="#161b22")
+        card1_top.pack(fill="x", pady=(0, 4))
+
+        lbl_c1_title = tk.Label(card1_top, text="☁️ Enlace Remoto / Internet", font=("Segoe UI", 12, "bold"), fg="#58a6ff", bg="#161b22")
+        lbl_c1_title.pack(side="left")
+
+        lbl_c1_desc = tk.Label(card1, text="Usa este enlace si te conectas fuera de casa o desde datos móviles:", font=("Segoe UI", 9), fg="#8b949e", bg="#161b22")
+        lbl_c1_desc.pack(anchor="w", pady=(0, 8))
+
+        # URL Entry Remoto
+        url_box1 = tk.Frame(card1, bg="#21262d", padx=8, pady=6, highlightbackground="#30363d", highlightthickness=1)
+        url_box1.pack(fill="x", pady=(0, 10))
+
+        self.url_pub_var = tk.StringVar(value="Generando túnel seguro...")
+        self.entry_pub = tk.Entry(url_box1, textvariable=self.url_pub_var, font=("Consolas", 11, "bold"), fg="#3fb950", bg="#21262d", bd=0, readonlybackground="#21262d", state="readonly")
+        self.entry_pub.pack(fill="x")
+
+        # Botones Remoto
+        b1_frame = tk.Frame(card1, bg="#161b22")
+        b1_frame.pack(fill="x")
+
+        self.btn_copy_pub = tk.Button(b1_frame, text="📋 Copiar Remoto", font=("Segoe UI", 9), bg="#21262d", fg="#c9d1d9", activebackground="#30363d", activeforeground="#ffffff", bd=0, padx=12, pady=6, cursor="hand2", command=self.copy_pub_url)
+        self.btn_copy_pub.pack(side="left", padx=(0, 8))
+
+        self.btn_open_pub = tk.Button(b1_frame, text="🌐 Probar Remoto", font=("Segoe UI", 9), bg="#21262d", fg="#c9d1d9", activebackground="#30363d", activeforeground="#ffffff", bd=0, padx=12, pady=6, cursor="hand2", command=self.open_pub_browser)
+        self.btn_open_pub.pack(side="left")
+
+        lbl_c1_hint = tk.Label(card1, text="⚠️ El túnel Cloudflare puede tardar 20-30 seg en propagar su DNS por primera vez.", font=("Segoe UI", 8), fg="#d29922", bg="#161b22")
+        lbl_c1_hint.pack(anchor="w", pady=(8, 0))
 
         # 3. PIE DE PAGINA
         footer_frame = tk.Frame(self.root, bg="#0d1117", padx=20, pady=8)
@@ -485,6 +489,22 @@ class StreamDeckApp:
         os._exit(0)
 
 if __name__ == "__main__":
+    # Prevenir multiples instancias que puedan colisionar con el puerto o Cloudflare
+    MUTEX_NAME = "StreamDeck_Local_SingleInstance_Mutex_Gandalfs3"
+    kernel32 = ctypes.windll.kernel32
+    mutex = kernel32.CreateMutexW(None, False, MUTEX_NAME)
+    if kernel32.GetLastError() == 183:  # ERROR_ALREADY_EXISTS
+        root = tk.Tk()
+        root.withdraw()
+        messagebox.showwarning("Stream Deck en Ejecución", "Stream Deck ya se está ejecutando en tu PC.\nRevisa tus ventanas abiertas o la barra de tareas.")
+        sys.exit(0)
+
+    # Limpiar procesos huérfanos anteriores
+    try:
+        subprocess.run("taskkill /f /im cloudflared.exe 2>nul", shell=True)
+    except Exception:
+        pass
+
     get_stats()
     root = tk.Tk()
     app = StreamDeckApp(root)
