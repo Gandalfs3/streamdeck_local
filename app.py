@@ -86,9 +86,17 @@ def get_stats():
         "ram_total": total_gb
     }
 
+CREATE_NO_WINDOW = 0x08000000
+
 def run_audio_tool(cmd):
     if os.path.exists(AUDIO_TOOL_PATH):
-        subprocess.Popen([AUDIO_TOOL_PATH, cmd], shell=False)
+        try:
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = 0
+            subprocess.Popen([AUDIO_TOOL_PATH, cmd], startupinfo=startupinfo, creationflags=CREATE_NO_WINDOW)
+        except Exception:
+            pass
 
 def execute_action(action):
     if action == "vol_up":
@@ -108,15 +116,15 @@ def execute_action(action):
     elif action == "open_code":
         code_path = os.path.expandvars(r"%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe")
         if os.path.exists(code_path):
-            subprocess.Popen(f'start "" "{code_path}"', shell=True)
+            os.startfile(code_path)
         else:
-            subprocess.Popen("start code", shell=True)
+            subprocess.Popen("start code", shell=True, creationflags=CREATE_NO_WINDOW)
     elif action == "open_terminal":
-        subprocess.Popen("start powershell", shell=True)
+        subprocess.Popen("start powershell", shell=True, creationflags=CREATE_NO_WINDOW)
     elif action == "open_browser":
-        subprocess.Popen("start http://localhost:3000", shell=True)
+        os.startfile("http://localhost:3000")
     elif action == "open_calc":
-        subprocess.Popen("calc", shell=True)
+        subprocess.Popen("calc", creationflags=CREATE_NO_WINDOW)
     elif action == "lock_pc":
         ctypes.windll.user32.LockWorkStation()
 
