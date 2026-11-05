@@ -11,255 +11,707 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      -webkit-tap-highlight-color: rgba(0,0,0,0);
+      -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
     }
-    body {
-      background-color: #0d1117;
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #090d16;
+      background: -webkit-radial-gradient(center, ellipse cover, #131b2a 0%, #070a10 100%);
+      background: radial-gradient(ellipse at center, #131b2a 0%, #070a10 100%);
       color: #f0f6fc;
-      font-family: Arial, Helvetica, sans-serif;
-      padding: 8px;
-      text-align: center;
-    }
-    
-    /* Header compatible con Android 4.0 */
-    .header {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 8px 12px;
-      margin-bottom: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       overflow: hidden;
-      font-size: 14px;
     }
-    .header-left {
-      float: left;
-      font-weight: bold;
-      color: #58a6ff;
-      line-height: 24px;
+
+    .app-container {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      padding: 12px 16px;
     }
-    .status-dot {
+
+    /* BARRA SUPERIOR */
+    .header-bar {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      background: rgba(22, 27, 34, 0.85);
+      border: 1px solid rgba(48, 54, 61, 0.8);
+      border-radius: 14px;
+      padding: 10px 18px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .brand-section {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-indicator {
       display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 5px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
       background: #2ea043;
-      margin-right: 6px;
-      vertical-align: middle;
+      box-shadow: 0 0 12px #3fb950;
+      animation: pulse-glow 2.5s infinite ease-in-out;
     }
-    .header-right {
-      float: right;
-      line-height: 24px;
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.8; box-shadow: 0 0 6px #2ea043; }
+      50% { opacity: 1; box-shadow: 0 0 16px #3fb950; }
     }
-    .badge {
+
+    .brand-title {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      background: -webkit-linear-gradient(45deg, #58a6ff, #79c0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: #58a6ff;
+      text-transform: uppercase;
+    }
+
+    .brand-badge {
+      font-size: 10px;
+      font-weight: 700;
+      background: #1f6feb;
+      color: #ffffff;
+      padding: 2px 7px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    /* TELEMETRIA CPU / RAM */
+    .telemetry-group {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      gap: 12px;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+
+    .telemetry-card {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 6px 14px;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    .metric-label {
+      color: #8b949e;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .metric-value {
+      font-family: "Consolas", monospace;
+      font-weight: 700;
+      color: #58a6ff;
+      min-width: 38px;
+    }
+
+    .progress-track {
+      width: 50px;
+      height: 7px;
+      background: #21262d;
+      border-radius: 4px;
+      overflow: hidden;
       display: inline-block;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #3fb950;
+      border-radius: 4px;
+      transition: width 0.4s ease, background 0.4s ease;
+    }
+
+    /* BOTONES DE ACCION TOP */
+    .header-actions {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-action-top {
       background: #21262d;
       border: 1px solid #30363d;
-      padding: 2px 8px;
-      border-radius: 4px;
-      margin-left: 6px;
+      color: #c9d1d9;
+      border-radius: 9px;
+      padding: 7px 14px;
       font-size: 12px;
-    }
-    .badge-val {
-      color: #3fb950;
-      font-weight: bold;
+      font-weight: 600;
+      cursor: pointer;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
     }
 
-    /* Grilla 100% compatible con WebKit antiguo (sin CSS Grid) */
-    .deck-container {
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-      text-align: center;
-      font-size: 0; /* Elimina espacio blanco de inline-block */
+    .btn-action-top:hover, .btn-action-top:active {
+      background: #30363d;
+      color: #ffffff;
+      border-color: #58a6ff;
     }
+
+    /* GRILLA STREAM DECK */
+    .deck-viewport {
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      flex: 1;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .deck-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 14px;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* BOTON STREAM DECK ESTILO TACTIL 3D */
     .deck-btn {
-      display: inline-block;
-      vertical-align: top;
-      width: 23%;
-      margin: 1%;
-      height: 88px;
-      background: #161b22;
-      border: 2px solid #30363d;
-      border-radius: 12px;
+      position: relative;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      border-radius: 18px;
       cursor: pointer;
       text-align: center;
-      font-size: 12px;
-      position: relative;
-      padding-top: 12px;
-      -webkit-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      outline: none;
+      border: 2px solid #28303f;
+      background: -webkit-linear-gradient(top, #1c2433 0%, #101520 100%);
+      background: linear-gradient(180deg, #1c2433 0%, #101520 100%);
+      box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.6),
+        0 6px 16px rgba(0, 0, 0, 0.45);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.2s ease, background 0.2s ease;
     }
+
+    /* Efecto reflejo brillante superior (Gloss) */
+    .deck-btn::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 35%;
+      background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%);
+      border-radius: 16px 16px 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Estado de pulsacion fisica */
     .deck-btn:active, .deck-btn.pressed {
-      background: #1f6feb !important;
-      border-color: #58a6ff !important;
-      -webkit-transform: scale(0.95);
-      transform: scale(0.95);
+      transform: translateY(4px) scale(0.96);
+      box-shadow: 
+        inset 0 2px 6px rgba(0, 0, 0, 0.8),
+        0 2px 5px rgba(0, 0, 0, 0.3);
     }
+
+    /* Iconos SVG */
     .deck-btn svg {
-      display: block;
-      margin: 0 auto 6px auto;
-      width: 28px;
-      height: 28px;
+      width: 38px;
+      height: 38px;
+      margin-bottom: 8px;
+      transition: transform 0.12s ease;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+    }
+
+    .deck-btn:active svg, .deck-btn.pressed svg {
+      transform: scale(1.1);
+    }
+
+    /* Etiquetas */
+    .deck-btn .btn-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e6edf3;
+      letter-spacing: 0.4px;
+      text-transform: capitalize;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    }
+
+    /* CATEGORIAS Y PALETAS DE COLOR */
+    /* 1. Multimedia (Verde Esmeralda) */
+    .theme-media {
+      border-color: rgba(46, 160, 67, 0.4);
+    }
+    .theme-media svg {
+      stroke: #3fb950;
+      fill: #3fb950;
+    }
+    .theme-media .stroke-only {
       fill: none;
-      stroke: #f0f6fc;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
+      stroke: #3fb950;
+      stroke-width: 2.2;
     }
-    .deck-btn .label {
-      display: block;
-      color: #c9d1d9;
-      font-size: 11px;
-      font-weight: bold;
-      letter-spacing: 0.3px;
+    .theme-media:hover {
+      border-color: #3fb950;
+      box-shadow: 0 0 16px rgba(63, 185, 80, 0.25);
+    }
+    .theme-media:active, .theme-media.pressed {
+      background: -webkit-linear-gradient(top, #14351c 0%, #0d2212 100%);
+      background: linear-gradient(180deg, #14351c 0%, #0d2212 100%);
+      border-color: #3fb950;
+      box-shadow: 0 0 25px rgba(63, 185, 80, 0.6);
     }
 
-    /* Colores por categorias */
-    .btn-green { border-color: #238636; }
-    .btn-green svg { stroke: #3fb950; fill: #3fb950; }
-    .btn-green .stroke-only { fill: none; }
+    /* 2. Sistema y Audio (Azul Zafiro) */
+    .theme-sys {
+      border-color: rgba(31, 111, 235, 0.4);
+    }
+    .theme-sys svg {
+      stroke: #58a6ff;
+      stroke-width: 2.2;
+      fill: none;
+    }
+    .theme-sys:hover {
+      border-color: #58a6ff;
+      box-shadow: 0 0 16px rgba(88, 166, 255, 0.25);
+    }
+    .theme-sys:active, .theme-sys.pressed {
+      background: -webkit-linear-gradient(top, #15345d 0%, #0c203b 100%);
+      background: linear-gradient(180deg, #15345d 0%, #0c203b 100%);
+      border-color: #58a6ff;
+      box-shadow: 0 0 25px rgba(88, 166, 255, 0.6);
+    }
 
-    .btn-blue { border-color: #1f6feb; }
-    .btn-blue svg { stroke: #58a6ff; }
+    /* 3. Apps y Desarrollo (Violeta / Purpura) */
+    .theme-dev {
+      border-color: rgba(137, 87, 229, 0.4);
+    }
+    .theme-dev svg {
+      stroke: #bc8cff;
+      stroke-width: 2.2;
+      fill: none;
+    }
+    .theme-dev:hover {
+      border-color: #bc8cff;
+      box-shadow: 0 0 16px rgba(188, 140, 255, 0.25);
+    }
+    .theme-dev:active, .theme-dev.pressed {
+      background: -webkit-linear-gradient(top, #341e57 0%, #1e1133 100%);
+      background: linear-gradient(180deg, #341e57 0%, #1e1133 100%);
+      border-color: #bc8cff;
+      box-shadow: 0 0 25px rgba(188, 140, 255, 0.6);
+    }
 
-    .btn-purple { border-color: #8957e5; }
-    .btn-purple svg { stroke: #bc8cff; }
+    /* 4. Alerta / Bloqueo (Rojo Carmesi) */
+    .theme-danger {
+      border-color: rgba(218, 54, 51, 0.4);
+    }
+    .theme-danger svg {
+      stroke: #f85149;
+      stroke-width: 2.2;
+      fill: none;
+    }
+    .theme-danger:hover {
+      border-color: #f85149;
+      box-shadow: 0 0 16px rgba(248, 81, 73, 0.25);
+    }
+    .theme-danger:active, .theme-danger.pressed {
+      background: -webkit-linear-gradient(top, #4c1716 0%, #2e0e0e 100%);
+      background: linear-gradient(180deg, #4c1716 0%, #2e0e0e 100%);
+      border-color: #f85149;
+      box-shadow: 0 0 25px rgba(248, 81, 73, 0.6);
+    }
 
-    .btn-red { border-color: #da3633; }
-    .btn-red svg { stroke: #f85149; }
+    /* 5. Utilidades (Cyan / Ambar) */
+    .theme-util {
+      border-color: rgba(210, 153, 34, 0.4);
+    }
+    .theme-util svg {
+      stroke: #e3b341;
+      stroke-width: 2.2;
+      fill: none;
+    }
+    .theme-util:hover {
+      border-color: #e3b341;
+      box-shadow: 0 0 16px rgba(227, 179, 65, 0.25);
+    }
+    .theme-util:active, .theme-util.pressed {
+      background: -webkit-linear-gradient(top, #4a3610 0%, #2b1f0a 100%);
+      background: linear-gradient(180deg, #4a3610 0%, #2b1f0a 100%);
+      border-color: #e3b341;
+      box-shadow: 0 0 25px rgba(227, 179, 65, 0.6);
+    }
+
+    /* RESPONSIVE: En tablets verticales o moviles */
+    @media (max-width: 700px) {
+      .deck-grid {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: 10px;
+      }
+      .deck-btn svg {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 4px;
+      }
+      .deck-btn .btn-text {
+        font-size: 11px;
+      }
+      .telemetry-group {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Barra de estado -->
-  <div class="header">
-    <div class="header-left">
-      <span class="status-dot" id="status-dot"></span>
-      Stream Deck
-    </div>
-    <div class="header-right">
-      <div class="badge">CPU: <span class="badge-val" id="cpu-val">--%</span></div>
-      <div class="badge">RAM: <span class="badge-val" id="ram-val">--%</span></div>
-    </div>
-  </div>
+  <div class="app-container">
 
-  <!-- Botonera -->
-  <div class="deck-container">
-    
-    <!-- FILA 1: MULTIMEDIA -->
-    <div class="deck-btn btn-green" data-action="prev_track">
-      <svg viewBox="0 0 24 24"><polygon points="11,5 11,19 2,12"/><polygon points="22,5 22,19 13,12"/></svg>
-      <span class="label">Anterior</span>
-    </div>
+    <!-- CABECERA SUPERIOR -->
+    <div class="header-bar">
+      <div class="brand-section">
+        <span class="status-indicator" id="status-indicator"></span>
+        <span class="brand-title">Stream Deck</span>
+        <span class="brand-badge">PRO</span>
+      </div>
 
-    <div class="deck-btn btn-green" data-action="play_pause">
-      <svg viewBox="0 0 24 24"><polygon points="5,3 15,12 5,21"/><rect x="17" y="4" width="4" height="16"/></svg>
-      <span class="label">Play / Pausa</span>
-    </div>
+      <div class="telemetry-group">
+        <div class="telemetry-card">
+          <span class="metric-label">CPU</span>
+          <span class="metric-value" id="cpu-val">0%</span>
+          <div class="progress-track"><div class="progress-bar" id="cpu-bar"></div></div>
+        </div>
+        <div class="telemetry-card">
+          <span class="metric-label">RAM</span>
+          <span class="metric-value" id="ram-val">0%</span>
+          <div class="progress-track"><div class="progress-bar" id="ram-bar"></div></div>
+        </div>
+      </div>
 
-    <div class="deck-btn btn-green" data-action="next_track">
-      <svg viewBox="0 0 24 24"><polygon points="2,5 2,19 11,12"/><polygon points="13,5 13,19 22,12"/></svg>
-      <span class="label">Siguiente</span>
-    </div>
-
-    <div class="deck-btn btn-red" data-action="vol_mute">
-      <svg viewBox="0 0 24 24" class="stroke-only"><polygon points="11,4 6,8 2,8 2,16 6,16 11,20"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-      <span class="label">Mutear</span>
+      <div class="header-actions">
+        <button class="btn-action-top" id="btn-sound" onclick="toggleSound()">
+          <span id="sound-icon">🔊</span> <span id="sound-label">Sonido</span>
+        </button>
+        <button class="btn-action-top" onclick="toggleFullScreen()">
+          <span>⛶</span> <span>Pantalla Completa</span>
+        </button>
+      </div>
     </div>
 
-    <!-- FILA 2: VOLUMEN & SISTEMA -->
-    <div class="deck-btn btn-green" data-action="vol_down">
-      <svg viewBox="0 0 24 24" class="stroke-only"><polygon points="11,4 6,8 2,8 2,16 6,16 11,20"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
-      <span class="label">Volumen -</span>
-    </div>
+    <!-- GRILLA PRINCIPAL 12 BOTONES EXPANDIDOS -->
+    <div class="deck-viewport">
+      <div class="deck-grid">
 
-    <div class="deck-btn btn-green" data-action="vol_up">
-      <svg viewBox="0 0 24 24" class="stroke-only"><polygon points="11,4 6,8 2,8 2,16 6,16 11,20"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>
-      <span class="label">Volumen +</span>
-    </div>
+        <!-- BOTÓN 1: PISTA ANTERIOR -->
+        <div class="deck-btn theme-media" data-action="prev_track">
+          <svg viewBox="0 0 24 24">
+            <polygon points="11,5 11,19 2,12"></polygon>
+            <polygon points="22,5 22,19 13,12"></polygon>
+          </svg>
+          <span class="btn-text">Anterior</span>
+        </div>
 
-    <div class="deck-btn btn-purple" data-action="desktop">
-      <svg viewBox="0 0 24 24" class="stroke-only"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      <span class="label">Escritorio</span>
-    </div>
+        <!-- BOTÓN 2: PLAY / PAUSA -->
+        <div class="deck-btn theme-media" data-action="play_pause">
+          <svg viewBox="0 0 24 24">
+            <polygon points="5,3 15,12 5,21"></polygon>
+            <rect x="17" y="4" width="4" height="16" rx="1"></rect>
+          </svg>
+          <span class="btn-text">Play / Pausa</span>
+        </div>
 
-    <div class="deck-btn btn-red" data-action="lock_pc">
-      <svg viewBox="0 0 24 24" class="stroke-only"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <span class="label">Bloquear PC</span>
-    </div>
+        <!-- BOTÓN 3: PISTA SIGUIENTE -->
+        <div class="deck-btn theme-media" data-action="next_track">
+          <svg viewBox="0 0 24 24">
+            <polygon points="2,5 2,19 11,12"></polygon>
+            <polygon points="13,5 13,19 22,12"></polygon>
+          </svg>
+          <span class="btn-text">Siguiente</span>
+        </div>
 
-    <!-- FILA 3: DESARROLLO & APPS -->
-    <div class="deck-btn btn-blue" data-action="open_code">
-      <svg viewBox="0 0 24 24" class="stroke-only"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-      <span class="label">VS Code</span>
-    </div>
+        <!-- BOTÓN 4: MUTEAR -->
+        <div class="deck-btn theme-danger" data-action="vol_mute">
+          <svg viewBox="0 0 24 24" class="stroke-only">
+            <polygon points="11,4 6,8 2,8 2,16 6,16 11,20"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+          <span class="btn-text">Mutear</span>
+        </div>
 
-    <div class="deck-btn btn-blue" data-action="open_terminal">
-      <svg viewBox="0 0 24 24" class="stroke-only"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-      <span class="label">Terminal</span>
-    </div>
+        <!-- BOTÓN 5: VOLUMEN MENOS -->
+        <div class="deck-btn theme-sys" data-action="vol_down">
+          <svg viewBox="0 0 24 24" class="stroke-only">
+            <polygon points="11,4 6,8 2,8 2,16 6,16 11,20"></polygon>
+            <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+          </svg>
+          <span class="btn-text">Volumen -</span>
+        </div>
 
-    <div class="deck-btn btn-blue" data-action="open_browser">
-      <svg viewBox="0 0 24 24" class="stroke-only"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      <span class="label">Localhost</span>
-    </div>
+        <!-- BOTÓN 6: VOLUMEN MAS -->
+        <div class="deck-btn theme-sys" data-action="vol_up">
+          <svg viewBox="0 0 24 24" class="stroke-only">
+            <polygon points="11,4 6,8 2,8 2,16 6,16 11,20"></polygon>
+            <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+            <path d="M19 5a10 10 0 0 1 0 14"></path>
+          </svg>
+          <span class="btn-text">Volumen +</span>
+        </div>
 
-    <div class="deck-btn btn-purple" data-action="open_calc">
-      <svg viewBox="0 0 24 24" class="stroke-only"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><line x1="8" y1="12" x2="8" y2="12.01"/><line x1="12" y1="12" x2="12" y2="12.01"/><line x1="16" y1="12" x2="16" y2="12.01"/><line x1="8" y1="16" x2="8" y2="16.01"/><line x1="12" y1="16" x2="12" y2="16.01"/></svg>
-      <span class="label">Calculadora</span>
+        <!-- BOTÓN 7: MOSTRAR ESCRITORIO -->
+        <div class="deck-btn theme-sys" data-action="desktop">
+          <svg viewBox="0 0 24 24" class="stroke-only">
+            <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span class="btn-text">Escritorio</span>
+        </div>
+
+        <!-- BOTÓN 8: BLOQUEAR PC -->
+        <div class="deck-btn theme-danger" data-action="lock_pc">
+          <svg viewBox="0 0 24 24" class="stroke-only">
+            <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span class="btn-text">Bloquear PC</span>
+        </div>
+
+        <!-- BOTÓN 9: VS CODE -->
+        <div class="deck-btn theme-dev" data-action="open_code">
+          <svg viewBox="0 0 24 24" class="stroke-only">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          <span class="btn-text">VS Code</span>
+        </div>
+
+        <!-- BOTÓN 10: TERMINAL -->
+        <div class="deck-btn theme-dev" data-action="open_terminal">
+          <svg viewBox="0 0 24 24" class="stroke-only">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+          </svg>
+          <span class="btn-text">Terminal</span>
+        </div>
+
+        <!-- BOTÓN 11: LOCALHOST / NAVEGADOR -->
+        <div class="deck-btn theme-util" data-action="open_browser">
+          <svg viewBox="0 0 24 24" class="stroke-only">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span class="btn-text">Localhost</span>
+        </div>
+
+        <!-- BOTÓN 12: CALCULADORA -->
+        <div class="deck-btn theme-util" data-action="open_calc">
+          <svg viewBox="0 0 24 24" class="stroke-only">
+            <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+            <line x1="8" y1="6" x2="16" y2="6"></line>
+            <line x1="16" y1="14" x2="16" y2="18"></line>
+            <line x1="8" y1="12" x2="8" y2="12.01"></line>
+            <line x1="12" y1="12" x2="12" y2="12.01"></line>
+            <line x1="16" y1="12" x2="16" y2="12.01"></line>
+            <line x1="8" y1="16" x2="8" y2="16.01"></line>
+            <line x1="12" y1="16" x2="12" y2="16.01"></line>
+          </svg>
+          <span class="btn-text">Calculadora</span>
+        </div>
+
+      </div>
     </div>
 
   </div>
 
   <script>
-    // Manejo tactil instantaneo para Android 4.0
-    var buttons = document.getElementsByClassName('deck-btn');
-    for (var i = 0; i < buttons.length; i++) {
+    // --- Sonido de pulsacion tactil con Web Audio API (Sin archivos externos) ---
+    var soundEnabled = true;
+    var audioCtx = null;
+
+    function playTactileClick() {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.035);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.035);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.035);
+      } catch(e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound-icon').innerHTML = soundEnabled ? '🔊' : '🔇';
+      document.getElementById('sound-label').innerHTML = soundEnabled ? 'Sonido' : 'Mudo';
+    }
+
+    // --- Manejo de eventos tactiles y clics ---
+    var keys = document.getElementsByClassName('deck-btn');
+    for (var i = 0; i < keys.length; i++) {
       (function(btn) {
         var action = btn.getAttribute('data-action');
-        
-        function trigger() {
+        function handlePress(e) {
+          if (e && e.preventDefault) e.preventDefault();
+          
+          // Efecto visual 3D
           btn.className += ' pressed';
           setTimeout(function() {
             btn.className = btn.className.replace(' pressed', '');
-          }, 120);
+          }, 110);
 
+          // Sonido y vibracion tactil
+          playTactileClick();
+          if (navigator.vibrate) {
+            try { navigator.vibrate(35); } catch(err) {}
+          }
+
+          // Enviar accion al servidor local
           var xhr = new XMLHttpRequest();
           xhr.open('POST', '/api/action', true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.send(JSON.stringify({ action: action }));
         }
 
-        btn.onclick = trigger;
-      })(buttons[i]);
+        if ('ontouchstart' in window) {
+          btn.ontouchstart = handlePress;
+        } else {
+          btn.onclick = handlePress;
+        }
+      })(keys[i]);
     }
 
-    // Telemetria
-    function updateStats() {
+    // --- Modo Pantalla Completa ---
+    function toggleFullScreen() {
+      var doc = document.documentElement;
+      var isInFullScreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+      if (!isInFullScreen) {
+        if (doc.requestFullscreen) {
+          doc.requestFullscreen();
+        } else if (doc.webkitRequestFullscreen) {
+          doc.webkitRequestFullscreen();
+        } else if (doc.mozRequestFullScreen) {
+          doc.mozRequestFullScreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        }
+      }
+    }
+
+    // --- Prevenir suspension de pantalla (Wake Lock) ---
+    if ('wakeLock' in navigator) {
+      try {
+        navigator.wakeLock.request('screen');
+      } catch (err) {}
+    }
+
+    // --- Telemetria CPU / RAM en vivo ---
+    function updateTelemetry() {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', '/api/stats', true);
       xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-          var dot = document.getElementById('status-dot');
-          if (xhr.status === 200) {
-            try {
-              var data = JSON.parse(xhr.responseText);
-              document.getElementById('cpu-val').innerHTML = data.cpu + '%';
-              document.getElementById('ram-val').innerHTML = data.ram + '%';
-              dot.style.background = '#2ea043';
-            } catch(e) {}
-          } else {
-            dot.style.background = '#da3633';
-          }
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          try {
+            var data = JSON.parse(xhr.responseText);
+            var cpu = data.cpu;
+            var ram = data.ram;
+
+            document.getElementById('cpu-val').innerHTML = cpu + '%';
+            document.getElementById('ram-val').innerHTML = ram + '%';
+
+            var cpuBar = document.getElementById('cpu-bar');
+            var ramBar = document.getElementById('ram-bar');
+
+            cpuBar.style.width = cpu + '%';
+            ramBar.style.width = ram + '%';
+
+            cpuBar.style.background = cpu > 80 ? '#f85149' : (cpu > 50 ? '#d29922' : '#3fb950');
+            ramBar.style.background = ram > 85 ? '#f85149' : (ram > 65 ? '#d29922' : '#3fb950');
+
+            document.getElementById('status-indicator').style.background = '#2ea043';
+          } catch(e) {}
         }
       };
       xhr.send();
     }
 
-    setInterval(updateStats, 3000);
-    updateStats();
+    setInterval(updateTelemetry, 2500);
+    updateTelemetry();
   </script>
 </body>
 </html>
