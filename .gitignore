@@ -1,4 +1,8 @@
 cloudflared.exe
+StreamDeck.exe
+build/
+dist/
+*.spec
 __pycache__/
 *.pyc
 .vscode/
