@@ -276,15 +276,17 @@
       width: 100%;
       height: 100%;
       min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 2px;
     }
 
     .deck-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(3, 1fr);
       gap: 12px;
       width: 100%;
-      height: 100%;
+      min-height: 100%;
     }
 
     /* BOTON STREAM DECK ESTILO TACTIL 3D */
@@ -315,6 +317,7 @@
         inset 0 -2px 5px rgba(0, 0, 0, 0.6),
         0 6px 16px rgba(0, 0, 0, 0.45);
       transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.2s ease, background 0.2s ease;
+      min-height: 85px;
     }
 
     .deck-btn::after {
@@ -490,9 +493,9 @@
     @media (max-width: 580px) {
       .deck-grid {
         grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(4, 1fr);
         gap: 8px;
       }
+      .deck-btn { min-height: 70px; }
       .deck-btn svg { width: 30px; height: 30px; margin-bottom: 3px; }
       .deck-btn .icon-emoji { font-size: 26px; margin-bottom: 3px; }
       .deck-btn .btn-text { font-size: 11px; }
@@ -723,8 +726,19 @@
 
         <!-- CAMPO APP -->
         <div class="form-group" id="group-app" style="display:none;">
-          <label>Programa / Comando:</label>
-          <input type="text" id="cfg-target-app" class="form-control" placeholder="calc, notepad, code, o ruta C:\...exe">
+          <label>Seleccionar Aplicación o Programa:</label>
+          <div style="display:flex; gap:6px; margin-bottom:8px;">
+            <select id="cfg-app-select" class="form-control" onchange="onAppSelectChanged()" style="flex:1;">
+              <option value="">Cargando programas de tu PC...</option>
+            </select>
+            <button class="btn-action-top" type="button" onclick="testSelectedApp()" title="Probar abrir aplicación en el PC">🚀 Probar</button>
+          </div>
+
+          <label style="font-size:11px; color:#8b949e; margin-bottom:3px;">Comando o ruta ejecutable:</label>
+          <input type="text" id="cfg-target-app" class="form-control" placeholder="calc, notepad, discord, o ruta C:\...exe">
+          <small style="color:#8b949e; font-size:10px; display:block; margin-top:4px;">
+            💡 Selecciona cualquier programa de tu PC en la lista superior, o escribe una ruta/comando personalizado.
+          </small>
         </div>
 
         <!-- CAMPO SOUNDBOARD -->
@@ -894,6 +908,13 @@
       var grid = document.getElementById('deck-grid');
       grid.innerHTML = '';
 
+      var totalItems = buttonsData.length + (editMode ? 1 : 0);
+      var isNarrow = window.innerWidth <= 580;
+      var cols = isNarrow ? 3 : 4;
+      var rows = Math.max(isNarrow ? 4 : 3, Math.ceil(totalItems / cols));
+      grid.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+      grid.style.gridTemplateRows = 'repeat(' + rows + ', 1fr)';
+
       for (var i = 0; i < buttonsData.length; i++) {
         (function(btn, idx) {
           var el = document.createElement('div');
@@ -1048,9 +1069,15 @@
         .then(function(r) { return r.json(); })
         .then(function(res) {
           if (res.status === 'ok') {
-            statusDiv.style.color = '#3fb950';
-            statusDiv.style.borderColor = '#238636';
-            statusDiv.innerHTML = '✅ ¡Copiado con éxito a <code>sounds/' + escapeHtml(res.filename) + '</code>!';
+            if (res.already_existed) {
+              statusDiv.style.color = '#79c0ff';
+              statusDiv.style.borderColor = '#1f6feb';
+              statusDiv.innerHTML = 'ℹ️ ' + escapeHtml(res.message);
+            } else {
+              statusDiv.style.color = '#3fb950';
+              statusDiv.style.borderColor = '#238636';
+              statusDiv.innerHTML = '✅ ¡Copiado con éxito a <code>sounds/' + escapeHtml(res.filename) + '</code>!';
+            }
             populateSoundDropdown(res.sounds, res.filename);
             
             // Sugerir nombre e icono automáticamente si está vacío o por defecto
@@ -1084,6 +1111,98 @@
       reader.readAsDataURL(file);
     }
 
+    var installedApps = [];
+
+    function populateAppsDropdown(apps, selectedTarget) {
+      installedApps = apps || [];
+      var select = document.getElementById('cfg-app-select');
+      select.innerHTML = '';
+
+      var optDefault = document.createElement('option');
+      optDefault.value = '';
+      optDefault.textContent = '-- Seleccionar un programa de tu PC --';
+      select.appendChild(optDefault);
+
+      var optCustom = document.createElement('option');
+      optCustom.value = '__custom__';
+      optCustom.textContent = '✏️ Escribir ruta o comando personalizado...';
+      select.appendChild(optCustom);
+
+      var currentCat = '';
+      var currentGroup = null;
+
+      for (var i = 0; i < installedApps.length; i++) {
+        var app = installedApps[i];
+        if (app.category !== currentCat) {
+          currentCat = app.category || 'Otros';
+          currentGroup = document.createElement('optgroup');
+          currentGroup.label = currentCat;
+          select.appendChild(currentGroup);
+        }
+        var opt = document.createElement('option');
+        opt.value = app.target;
+        opt.textContent = app.name;
+        opt.setAttribute('data-icon', app.icon || '🚀');
+        opt.setAttribute('data-name', app.name);
+        (currentGroup || select).appendChild(opt);
+      }
+
+      if (selectedTarget) {
+        select.value = selectedTarget;
+      }
+    }
+
+    function loadInstalledApps(selectedTarget) {
+      if (installedApps.length > 0) {
+        populateAppsDropdown(installedApps, selectedTarget);
+        return;
+      }
+      fetch('/api/apps')
+        .then(function(res) { return res.json(); })
+        .then(function(apps) {
+          populateAppsDropdown(apps, selectedTarget);
+        })
+        .catch(function() {});
+    }
+
+    function onAppSelectChanged() {
+      var select = document.getElementById('cfg-app-select');
+      var targetInput = document.getElementById('cfg-target-app');
+      var val = select.value;
+      if (val === '__custom__') {
+        targetInput.focus();
+        return;
+      }
+      if (val) {
+        targetInput.value = val;
+        var selectedOpt = select.options[select.selectedIndex];
+        var rawName = selectedOpt ? (selectedOpt.getAttribute('data-name') || selectedOpt.textContent) : '';
+        var cleanName = rawName.replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\s]+/u, '').trim();
+        var titleInput = document.getElementById('cfg-title');
+        if (!titleInput.value || titleInput.value === 'Botón') {
+          titleInput.value = cleanName || 'App';
+        }
+        var iconInput = document.getElementById('cfg-icon');
+        var suggestedIcon = selectedOpt ? selectedOpt.getAttribute('data-icon') : '🚀';
+        if (!iconInput.value || iconInput.value === '⭐') {
+          iconInput.value = suggestedIcon || '🚀';
+        }
+      }
+    }
+
+    function testSelectedApp() {
+      var target = document.getElementById('cfg-target-app').value.trim();
+      if (target) {
+        fetch('/api/action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'app', target: target })
+        });
+      } else {
+        alert('Por favor selecciona primero un programa de la lista.');
+      }
+    }
+
     function openEditModal(index) {
       currentEditingIndex = index;
       var modal = document.getElementById('edit-modal');
@@ -1096,6 +1215,9 @@
       }
 
       loadSoundFiles();
+
+      var currentAppTarget = (index >= 0 && buttonsData[index] && buttonsData[index].type === 'app') ? buttonsData[index].target : '';
+      loadInstalledApps(currentAppTarget);
 
       if (index >= 0 && buttonsData[index]) {
         var btn = buttonsData[index];
@@ -1179,6 +1301,10 @@
         target = document.getElementById('cfg-target-url').value.trim();
       } else if (type === 'app') {
         target = document.getElementById('cfg-target-app').value.trim();
+        if (!target) {
+          alert('Por favor selecciona una aplicación de la lista o escribe una ruta/comando.');
+          return;
+        }
       } else if (type === 'sound') {
         target = document.getElementById('cfg-target-sound').value;
         if (target === '__upload__') target = '';
@@ -1296,6 +1422,7 @@
     setInterval(updateTelemetry, 2500);
     updateTelemetry();
     loadButtons();
+    window.addEventListener('resize', renderGrid);
   </script>
 </body>
 </html>

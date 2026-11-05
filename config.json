@@ -108,12 +108,30 @@
     "icon": "calc"
   },
   {
-    "id": "btn_1793915223043",
-    "title": "ta ta",
-    "theme": "theme-pink",
+    "id": "btn_1793915792509",
+    "title": "risas",
+    "theme": "theme-cyan",
     "type": "sound",
     "action": "",
-    "target": "tada.wav",
+    "target": "risa.mp3",
     "icon": "🎵"
+  },
+  {
+    "id": "btn_1793915814908",
+    "title": "ta ta",
+    "theme": "theme-danger",
+    "type": "app",
+    "action": "",
+    "target": "brave",
+    "icon": "🚀"
+  },
+  {
+    "id": "btn_1793915831394",
+    "title": "risas3",
+    "theme": "theme-cyan",
+    "type": "system",
+    "action": "vol_mute",
+    "target": "",
+    "icon": "📺"
   }
 ]

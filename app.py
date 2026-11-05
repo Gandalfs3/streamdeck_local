@@ -180,9 +180,10 @@ def play_sound(filename):
             pass
 
     try:
-        sound_counter = (sound_counter + 1) % 100
+        # Cerrar dispositivos previos para liberar locks sobre archivos de audio
+        ctypes.windll.winmm.mciSendStringW('close all', None, 0, None)
+        sound_counter = (sound_counter + 1) % 50
         alias = f"sd_snd_{sound_counter}"
-        ctypes.windll.winmm.mciSendStringW(f'close {alias}', None, 0, None)
         ret = ctypes.windll.winmm.mciSendStringW(f'open "{filepath}" type mpegvideo alias {alias}', None, 0, None)
         if ret == 0:
             ctypes.windll.winmm.mciSendStringW(f'play {alias} from 0', None, 0, None)
@@ -190,6 +191,68 @@ def play_sound(filename):
     except Exception:
         pass
     return False
+
+cached_apps = None
+
+def list_installed_apps():
+    global cached_apps
+    if cached_apps is not None:
+        return cached_apps
+
+    builtin = [
+        {"name": "🔢 Calculadora", "target": "calc", "icon": "calc", "category": "Herramientas de Windows"},
+        {"name": "📝 Bloc de Notas", "target": "notepad", "icon": "📝", "category": "Herramientas de Windows"},
+        {"name": "🎨 Paint", "target": "mspaint", "icon": "🎨", "category": "Herramientas de Windows"},
+        {"name": "📁 Explorador de Archivos", "target": "explorer", "icon": "📁", "category": "Herramientas de Windows"},
+        {"name": "💻 Terminal / PowerShell", "target": "powershell", "icon": "terminal", "category": "Herramientas de Windows"},
+        {"name": "⚙️ Configuración de Windows", "target": "ms-settings:", "icon": "⚙️", "category": "Herramientas de Windows"},
+        {"name": "📊 Administrador de Tareas", "target": "taskmgr", "icon": "📊", "category": "Herramientas de Windows"},
+    ]
+    seen = {b["name"].lower(): True for b in builtin}
+    
+    dirs = [
+        r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs",
+        os.path.expandvars(r"%APPDATA%\Microsoft\Windows\Start Menu\Programs")
+    ]
+    ignore_words = {"uninstall", "desinstalar", "help", "ayuda", "readme", "leeme", "documentation", "manual", "website", "sitio", "web", "url"}
+    installed = []
+
+    for d in dirs:
+        if os.path.exists(d):
+            for root, _, files in os.walk(d):
+                for f in files:
+                    if f.lower().endswith(".lnk"):
+                        name = f[:-4]
+                        low = name.lower()
+                        if any(w in low for w in ignore_words):
+                            continue
+                        if low in seen:
+                            continue
+                        seen[low] = True
+                        full_p = os.path.join(root, f)
+                        # Sugerir icono visual apropiado
+                        icon = "🚀"
+                        if any(k in low for k in ["code", "visual studio", "sublime", "dev", "git"]):
+                            icon = "code"
+                        elif any(k in low for k in ["discord", "chat", "slack", "teams"]):
+                            icon = "💬"
+                        elif any(k in low for k in ["spotify", "music", "audio", "itunes", "vlc"]):
+                            icon = "🎵"
+                        elif any(k in low for k in ["game", "steam", "epic", "riot", "blizzard", "play", "juego"]):
+                            icon = "🎮"
+                        elif any(k in low for k in ["chrome", "edge", "firefox", "brave", "opera", "browser"]):
+                            icon = "🌐"
+                        elif any(k in low for k in ["obs", "stream", "cam", "video", "twitch"]):
+                            icon = "📺"
+                        installed.append({
+                            "name": name,
+                            "target": full_p,
+                            "icon": icon,
+                            "category": "Programas Instalados"
+                        })
+    installed.sort(key=lambda x: x["name"].lower())
+    cached_apps = builtin + installed
+    return cached_apps
 
 def handle_action_request(data):
     action_type = data.get("type", "")
@@ -208,20 +271,26 @@ def handle_action_request(data):
 
     elif action_type == "app":
         if target:
-            if target == "code":
+            target = target.strip()
+            if target.lower() == "code":
                 code_path = os.path.expandvars(r"%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe")
                 if os.path.exists(code_path):
-                    os.startfile(code_path)
-                    return True
+                    target = code_path
+            try:
+                os.startfile(target)
+                return True
+            except Exception:
+                pass
             try:
                 subprocess.Popen(f'start "" "{target}"', shell=True, creationflags=CREATE_NO_WINDOW)
                 return True
             except Exception:
-                try:
-                    os.startfile(target)
-                    return True
-                except Exception:
-                    pass
+                pass
+            try:
+                subprocess.Popen(target, shell=True, creationflags=CREATE_NO_WINDOW)
+                return True
+            except Exception:
+                pass
 
     elif action_type == "system":
         execute_action(action)
@@ -292,6 +361,15 @@ class StreamDeckHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(list_sounds(), ensure_ascii=False).encode("utf-8"))
             return
 
+        if self.path == "/api/apps":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.end_headers()
+            self.wfile.write(json.dumps(list_installed_apps(), ensure_ascii=False).encode("utf-8"))
+            return
+
         if self.path == "/" or self.path == "/index.html":
             if os.path.exists(INDEX_HTML_PATH):
                 with open(INDEX_HTML_PATH, "rb") as f:
@@ -359,13 +437,28 @@ class StreamDeckHandler(http.server.BaseHTTPRequestHandler):
                 ext = os.path.splitext(clean_name)[1].lower()
                 valid_exts = {".mp3", ".wav", ".wma", ".ogg", ".m4a", ".aac"}
                 if ext in valid_exts:
+                    dest_path = os.path.join(SOUNDS_DIR, clean_name)
+                    already_exists = os.path.exists(dest_path)
                     try:
                         import base64
                         file_bytes = base64.b64decode(b64data)
-                        dest_path = os.path.join(SOUNDS_DIR, clean_name)
-                        with open(dest_path, "wb") as f:
-                            f.write(file_bytes)
-                        res = {"status": "ok", "filename": clean_name, "sounds": list_sounds()}
+                        # Liberar locks previos sobre mci
+                        ctypes.windll.winmm.mciSendStringW('close all', None, 0, None)
+                        try:
+                            with open(dest_path, "wb") as f:
+                                f.write(file_bytes)
+                        except PermissionError:
+                            # Si ya existe en disco y esta bloqueado por reproduccion, se reutiliza
+                            pass
+                        
+                        msg = f"El archivo '{clean_name}' ya existe en la carpeta de sonidos y ha sido seleccionado." if already_exists else f"'{clean_name}' copiado con éxito a la carpeta sounds/."
+                        res = {
+                            "status": "ok",
+                            "filename": clean_name,
+                            "sounds": list_sounds(),
+                            "already_existed": already_exists,
+                            "message": msg
+                        }
                     except Exception as e:
                         res = {"status": "error", "message": f"Error guardando archivo: {e}"}
                 else:
