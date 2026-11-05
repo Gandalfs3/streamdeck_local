@@ -3,6 +3,7 @@
 Un Stream Deck táctil, ligero y personalizable que convierte cualquier tablet vieja (Android 4.0.3+), smartphone o navegador web en una consola de atajos para tu PC con Windows.
 
 [![Descargar StreamDeck.exe](https://img.shields.io/badge/Descargar-StreamDeck.exe-brightgreen?style=for-the-badge&logo=windows)](https://github.com/Gandalfs3/streamdeck_local/releases/latest/download/StreamDeck.exe)
+[![Autor](https://img.shields.io/badge/Creado%20por-Gandalfs3-blue?style=for-the-badge&logo=github)](https://github.com/Gandalfs3)
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-blue?logo=windows)
 ![Cloudflare](https://img.shields.io/badge/Tunnel-Cloudflare-orange?logo=cloudflare)
 ![Open Source](https://img.shields.io/badge/License-MIT-purple)
@@ -67,3 +68,13 @@ Si deseas modificar los botones o acciones:
    ```bash
    pyinstaller --noconfirm StreamDeck.spec
    ```
+
+---
+
+## 👤 Autor & Créditos
+
+Este proyecto fue ideado y creado por **[Gandalfs3](https://github.com/Gandalfs3)** como una herramienta libre y de código abierto para la comunidad.
+
+- **GitHub:** [@Gandalfs3](https://github.com/Gandalfs3)
+- **Repositorio Oficial:** [https://github.com/Gandalfs3/streamdeck_local](https://github.com/Gandalfs3/streamdeck_local)
+- **Licencia:** MIT - Libre para usar, modificar y compartir.

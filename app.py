@@ -204,7 +204,7 @@ def get_local_ip():
 class StreamDeckApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Stream Deck PC Server")
+        self.root.title("Stream Deck PC Server • por Gandalfs3")
         self.root.geometry("740x510")
         self.root.resizable(False, False)
         self.root.configure(bg="#0d1117")
@@ -269,7 +269,11 @@ class StreamDeckApp:
         title_lbl.pack(side="left")
 
         badge_lbl = tk.Label(title_left, text="v1.0.1 PRO", font=("Segoe UI", 9, "bold"), fg="#ffffff", bg="#238636", padx=6, pady=1)
-        badge_lbl.pack(side="left", padx=10)
+        badge_lbl.pack(side="left", padx=8)
+
+        author_lbl = tk.Label(title_left, text="por @Gandalfs3", font=("Segoe UI", 9, "bold"), fg="#8b949e", bg="#21262d", padx=6, pady=1, cursor="hand2")
+        author_lbl.pack(side="left", padx=2)
+        author_lbl.bind("<Button-1>", lambda e: subprocess.Popen('start "" "https://github.com/Gandalfs3"', shell=True))
 
         self.status_lbl = tk.Label(header_frame, text="● Conectando túnel seguro...", font=("Segoe UI", 11, "bold"), fg="#d29922", bg="#161b22")
         self.status_lbl.pack(side="right")
@@ -376,13 +380,17 @@ class StreamDeckApp:
         self.btn_open_loc.pack(side="left")
 
         # 3. PIE DE PAGINA
-        footer_frame = tk.Frame(self.root, bg="#0d1117", padx=24, pady=8)
+        footer_frame = tk.Frame(self.root, bg="#0d1117", padx=20, pady=8)
         footer_frame.pack(fill="x", side="bottom")
 
-        lbl_footer = tk.Label(footer_frame, text="💡 Stream Deck Local • Código Abierto • Puerto 5000", font=("Segoe UI", 8), fg="#484f58", bg="#0d1117")
+        lbl_footer = tk.Label(footer_frame, text="💡 Creado por Gandalfs3 • Código Abierto:", font=("Segoe UI", 8), fg="#8b949e", bg="#0d1117")
         lbl_footer.pack(side="left")
 
-        lbl_hint = tk.Label(footer_frame, text="Usa F11 en la web para Pantalla Completa", font=("Segoe UI", 8), fg="#58a6ff", bg="#0d1117")
+        link_gh = tk.Label(footer_frame, text="github.com/Gandalfs3/streamdeck_local", font=("Segoe UI", 8, "underline"), fg="#58a6ff", bg="#0d1117", cursor="hand2")
+        link_gh.pack(side="left", padx=(4, 0))
+        link_gh.bind("<Button-1>", lambda e: subprocess.Popen('start "" "https://github.com/Gandalfs3/streamdeck_local"', shell=True))
+
+        lbl_hint = tk.Label(footer_frame, text="⛶ F11 = Pantalla Completa", font=("Segoe UI", 8), fg="#3fb950", bg="#0d1117")
         lbl_hint.pack(side="right")
 
     def copy_pub_url(self):

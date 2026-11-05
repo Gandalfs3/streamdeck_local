@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Stream Deck Pro</title>
+  <title>Stream Deck Pro • por Gandalfs3</title>
   <style>
     * {
       -webkit-box-sizing: border-box;
@@ -36,7 +36,7 @@
       flex-direction: column;
       width: 100%;
       height: 100%;
-      padding: 12px 16px;
+      padding: 10px 14px;
     }
 
     /* BARRA SUPERIOR */
@@ -50,13 +50,15 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      background: rgba(22, 27, 34, 0.85);
+      background: rgba(22, 27, 34, 0.9);
       border: 1px solid rgba(48, 54, 61, 0.8);
-      border-radius: 14px;
-      padding: 10px 18px;
-      margin-bottom: 12px;
+      border-radius: 12px;
+      padding: 8px 14px;
+      margin-bottom: 10px;
       flex-shrink: 0;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      gap: 10px;
+      overflow: hidden;
     }
 
     .brand-section {
@@ -66,33 +68,37 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .status-indicator {
       display: inline-block;
-      width: 12px;
-      height: 12px;
+      width: 11px;
+      height: 11px;
       border-radius: 50%;
       background: #2ea043;
-      box-shadow: 0 0 12px #3fb950;
+      box-shadow: 0 0 10px #3fb950;
       animation: pulse-glow 2.5s infinite ease-in-out;
+      flex-shrink: 0;
     }
 
     @keyframes pulse-glow {
-      0%, 100% { opacity: 0.8; box-shadow: 0 0 6px #2ea043; }
-      50% { opacity: 1; box-shadow: 0 0 16px #3fb950; }
+      0%, 100% { opacity: 0.8; box-shadow: 0 0 5px #2ea043; }
+      50% { opacity: 1; box-shadow: 0 0 14px #3fb950; }
     }
 
     .brand-title {
-      font-size: 17px;
+      font-size: 15px;
       font-weight: 800;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.6px;
       background: -webkit-linear-gradient(45deg, #58a6ff, #79c0ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       color: #58a6ff;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .brand-badge {
@@ -100,9 +106,33 @@
       font-weight: 700;
       background: #1f6feb;
       color: #ffffff;
-      padding: 2px 7px;
+      padding: 2px 6px;
+      border-radius: 5px;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+    }
+
+    .author-badge {
+      display: -webkit-inline-box;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #8b949e;
+      text-decoration: none;
+      background: #161b22;
+      border: 1px solid #30363d;
+      padding: 3px 8px;
       border-radius: 6px;
-      letter-spacing: 0.5px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .author-badge:hover, .author-badge:active {
+      color: #58a6ff;
+      border-color: #58a6ff;
+      background: #21262d;
     }
 
     /* TELEMETRIA CPU / RAM */
@@ -110,47 +140,49 @@
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
-      gap: 12px;
+      gap: 10px;
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
+      flex-shrink: 1;
     }
 
     .telemetry-card {
       background: #0d1117;
       border: 1px solid #30363d;
-      border-radius: 10px;
-      padding: 6px 14px;
+      border-radius: 8px;
+      padding: 4px 10px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      gap: 10px;
-      font-size: 13px;
+      gap: 8px;
+      font-size: 12px;
       font-weight: 600;
       box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+      white-space: nowrap;
     }
 
     .metric-label {
       color: #8b949e;
       text-transform: uppercase;
-      font-size: 11px;
+      font-size: 10px;
     }
 
     .metric-value {
       font-family: "Consolas", monospace;
       font-weight: 700;
       color: #58a6ff;
-      min-width: 38px;
+      min-width: 32px;
     }
 
     .progress-track {
-      width: 50px;
-      height: 7px;
+      width: 42px;
+      height: 6px;
       background: #21262d;
-      border-radius: 4px;
+      border-radius: 3px;
       overflow: hidden;
       display: inline-block;
     }
@@ -159,7 +191,7 @@
       height: 100%;
       width: 0%;
       background: #3fb950;
-      border-radius: 4px;
+      border-radius: 3px;
       transition: width 0.4s ease, background 0.4s ease;
     }
 
@@ -168,16 +200,18 @@
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
-      gap: 8px;
+      gap: 6px;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .btn-action-top {
       background: #21262d;
       border: 1px solid #30363d;
       color: #c9d1d9;
-      border-radius: 9px;
-      padding: 7px 14px;
-      font-size: 12px;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
       display: -webkit-box;
@@ -186,7 +220,8 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      white-space: nowrap;
       transition: all 0.2s ease;
     }
 
@@ -213,7 +248,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       grid-template-rows: repeat(3, 1fr);
-      gap: 14px;
+      gap: 12px;
       width: 100%;
       height: 100%;
     }
@@ -233,7 +268,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      border-radius: 18px;
+      border-radius: 16px;
       cursor: pointer;
       text-align: center;
       overflow: hidden;
@@ -248,7 +283,6 @@
       transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.2s ease, background 0.2s ease;
     }
 
-    /* Efecto reflejo brillante superior (Gloss) */
     .deck-btn::after {
       content: "";
       position: absolute;
@@ -262,7 +296,6 @@
       pointer-events: none;
     }
 
-    /* Estado de pulsacion fisica */
     .deck-btn:active, .deck-btn.pressed {
       transform: translateY(4px) scale(0.96);
       box-shadow: 
@@ -270,11 +303,10 @@
         0 2px 5px rgba(0, 0, 0, 0.3);
     }
 
-    /* Iconos SVG */
     .deck-btn svg {
-      width: 38px;
-      height: 38px;
-      margin-bottom: 8px;
+      width: 36px;
+      height: 36px;
+      margin-bottom: 6px;
       transition: transform 0.12s ease;
       filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
     }
@@ -283,7 +315,6 @@
       transform: scale(1.1);
     }
 
-    /* Etiquetas */
     .deck-btn .btn-text {
       font-size: 13px;
       font-weight: 700;
@@ -293,24 +324,11 @@
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
     }
 
-    /* CATEGORIAS Y PALETAS DE COLOR */
-    /* 1. Multimedia (Verde Esmeralda) */
-    .theme-media {
-      border-color: rgba(46, 160, 67, 0.4);
-    }
-    .theme-media svg {
-      stroke: #3fb950;
-      fill: #3fb950;
-    }
-    .theme-media .stroke-only {
-      fill: none;
-      stroke: #3fb950;
-      stroke-width: 2.2;
-    }
-    .theme-media:hover {
-      border-color: #3fb950;
-      box-shadow: 0 0 16px rgba(63, 185, 80, 0.25);
-    }
+    /* PALETA POR CATEGORIAS */
+    .theme-media { border-color: rgba(46, 160, 67, 0.4); }
+    .theme-media svg { stroke: #3fb950; fill: #3fb950; }
+    .theme-media .stroke-only { fill: none; stroke: #3fb950; stroke-width: 2.2; }
+    .theme-media:hover { border-color: #3fb950; box-shadow: 0 0 16px rgba(63, 185, 80, 0.25); }
     .theme-media:active, .theme-media.pressed {
       background: -webkit-linear-gradient(top, #14351c 0%, #0d2212 100%);
       background: linear-gradient(180deg, #14351c 0%, #0d2212 100%);
@@ -318,19 +336,9 @@
       box-shadow: 0 0 25px rgba(63, 185, 80, 0.6);
     }
 
-    /* 2. Sistema y Audio (Azul Zafiro) */
-    .theme-sys {
-      border-color: rgba(31, 111, 235, 0.4);
-    }
-    .theme-sys svg {
-      stroke: #58a6ff;
-      stroke-width: 2.2;
-      fill: none;
-    }
-    .theme-sys:hover {
-      border-color: #58a6ff;
-      box-shadow: 0 0 16px rgba(88, 166, 255, 0.25);
-    }
+    .theme-sys { border-color: rgba(31, 111, 235, 0.4); }
+    .theme-sys svg { stroke: #58a6ff; stroke-width: 2.2; fill: none; }
+    .theme-sys:hover { border-color: #58a6ff; box-shadow: 0 0 16px rgba(88, 166, 255, 0.25); }
     .theme-sys:active, .theme-sys.pressed {
       background: -webkit-linear-gradient(top, #15345d 0%, #0c203b 100%);
       background: linear-gradient(180deg, #15345d 0%, #0c203b 100%);
@@ -338,19 +346,9 @@
       box-shadow: 0 0 25px rgba(88, 166, 255, 0.6);
     }
 
-    /* 3. Apps y Desarrollo (Violeta / Purpura) */
-    .theme-dev {
-      border-color: rgba(137, 87, 229, 0.4);
-    }
-    .theme-dev svg {
-      stroke: #bc8cff;
-      stroke-width: 2.2;
-      fill: none;
-    }
-    .theme-dev:hover {
-      border-color: #bc8cff;
-      box-shadow: 0 0 16px rgba(188, 140, 255, 0.25);
-    }
+    .theme-dev { border-color: rgba(137, 87, 229, 0.4); }
+    .theme-dev svg { stroke: #bc8cff; stroke-width: 2.2; fill: none; }
+    .theme-dev:hover { border-color: #bc8cff; box-shadow: 0 0 16px rgba(188, 140, 255, 0.25); }
     .theme-dev:active, .theme-dev.pressed {
       background: -webkit-linear-gradient(top, #341e57 0%, #1e1133 100%);
       background: linear-gradient(180deg, #341e57 0%, #1e1133 100%);
@@ -358,19 +356,9 @@
       box-shadow: 0 0 25px rgba(188, 140, 255, 0.6);
     }
 
-    /* 4. Alerta / Bloqueo (Rojo Carmesi) */
-    .theme-danger {
-      border-color: rgba(218, 54, 51, 0.4);
-    }
-    .theme-danger svg {
-      stroke: #f85149;
-      stroke-width: 2.2;
-      fill: none;
-    }
-    .theme-danger:hover {
-      border-color: #f85149;
-      box-shadow: 0 0 16px rgba(248, 81, 73, 0.25);
-    }
+    .theme-danger { border-color: rgba(218, 54, 51, 0.4); }
+    .theme-danger svg { stroke: #f85149; stroke-width: 2.2; fill: none; }
+    .theme-danger:hover { border-color: #f85149; box-shadow: 0 0 16px rgba(248, 81, 73, 0.25); }
     .theme-danger:active, .theme-danger.pressed {
       background: -webkit-linear-gradient(top, #4c1716 0%, #2e0e0e 100%);
       background: linear-gradient(180deg, #4c1716 0%, #2e0e0e 100%);
@@ -378,19 +366,9 @@
       box-shadow: 0 0 25px rgba(248, 81, 73, 0.6);
     }
 
-    /* 5. Utilidades (Cyan / Ambar) */
-    .theme-util {
-      border-color: rgba(210, 153, 34, 0.4);
-    }
-    .theme-util svg {
-      stroke: #e3b341;
-      stroke-width: 2.2;
-      fill: none;
-    }
-    .theme-util:hover {
-      border-color: #e3b341;
-      box-shadow: 0 0 16px rgba(227, 179, 65, 0.25);
-    }
+    .theme-util { border-color: rgba(210, 153, 34, 0.4); }
+    .theme-util svg { stroke: #e3b341; stroke-width: 2.2; fill: none; }
+    .theme-util:hover { border-color: #e3b341; box-shadow: 0 0 16px rgba(227, 179, 65, 0.25); }
     .theme-util:active, .theme-util.pressed {
       background: -webkit-linear-gradient(top, #4a3610 0%, #2b1f0a 100%);
       background: linear-gradient(180deg, #4a3610 0%, #2b1f0a 100%);
@@ -398,24 +376,26 @@
       box-shadow: 0 0 25px rgba(227, 179, 65, 0.6);
     }
 
-    /* RESPONSIVE: En tablets verticales o moviles */
-    @media (max-width: 700px) {
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 780px) {
+      .telemetry-group { display: none; }
+      .brand-title { font-size: 14px; }
+      .full-text { display: none; }
+      .short-text { display: inline; }
+    }
+    @media (min-width: 781px) {
+      .short-text { display: none; }
+    }
+    @media (max-width: 580px) {
       .deck-grid {
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(4, 1fr);
-        gap: 10px;
+        gap: 8px;
       }
-      .deck-btn svg {
-        width: 32px;
-        height: 32px;
-        margin-bottom: 4px;
-      }
-      .deck-btn .btn-text {
-        font-size: 11px;
-      }
-      .telemetry-group {
-        display: none;
-      }
+      .deck-btn svg { width: 30px; height: 30px; margin-bottom: 3px; }
+      .deck-btn .btn-text { font-size: 11px; }
+      .brand-badge { display: none; }
+      .author-name { display: none; }
     }
   </style>
 </head>
@@ -427,8 +407,11 @@
     <div class="header-bar">
       <div class="brand-section">
         <span class="status-indicator" id="status-indicator"></span>
-        <span class="brand-title">Stream Deck</span>
+        <span class="brand-title">STREAM DECK</span>
         <span class="brand-badge">PRO</span>
+        <a href="https://github.com/Gandalfs3" target="_blank" class="author-badge" title="Creado por Gandalfs3">
+          <span>❤️</span> <span class="author-label">por</span> <strong>@Gandalfs3</strong>
+        </a>
       </div>
 
       <div class="telemetry-group">
@@ -448,8 +431,10 @@
         <button class="btn-action-top" id="btn-sound" onclick="toggleSound()">
           <span id="sound-icon">🔊</span> <span id="sound-label">Sonido</span>
         </button>
-        <button class="btn-action-top" onclick="toggleFullScreen()">
-          <span>⛶</span> <span>Pantalla Completa</span>
+        <button class="btn-action-top" onclick="toggleFullScreen()" title="Modo Pantalla Completa">
+          <span>⛶</span> 
+          <span class="full-text">Pantalla Completa</span>
+          <span class="short-text">Full</span>
         </button>
       </div>
     </div>
@@ -623,19 +608,16 @@
         function handlePress(e) {
           if (e && e.preventDefault) e.preventDefault();
           
-          // Efecto visual 3D
           btn.className += ' pressed';
           setTimeout(function() {
             btn.className = btn.className.replace(' pressed', '');
           }, 110);
 
-          // Sonido y vibracion tactil
           playTactileClick();
           if (navigator.vibrate) {
             try { navigator.vibrate(35); } catch(err) {}
           }
 
-          // Enviar accion al servidor local
           var xhr = new XMLHttpRequest();
           xhr.open('POST', '/api/action', true);
           xhr.setRequestHeader('Content-Type', 'application/json');
@@ -691,19 +673,25 @@
             var cpu = data.cpu;
             var ram = data.ram;
 
-            document.getElementById('cpu-val').innerHTML = cpu + '%';
-            document.getElementById('ram-val').innerHTML = ram + '%';
+            var cpuEl = document.getElementById('cpu-val');
+            var ramEl = document.getElementById('ram-val');
+            if (cpuEl) cpuEl.innerHTML = cpu + '%';
+            if (ramEl) ramEl.innerHTML = ram + '%';
 
             var cpuBar = document.getElementById('cpu-bar');
             var ramBar = document.getElementById('ram-bar');
 
-            cpuBar.style.width = cpu + '%';
-            ramBar.style.width = ram + '%';
+            if (cpuBar) {
+              cpuBar.style.width = cpu + '%';
+              cpuBar.style.background = cpu > 80 ? '#f85149' : (cpu > 50 ? '#d29922' : '#3fb950');
+            }
+            if (ramBar) {
+              ramBar.style.width = ram + '%';
+              ramBar.style.background = ram > 85 ? '#f85149' : (ram > 65 ? '#d29922' : '#3fb950');
+            }
 
-            cpuBar.style.background = cpu > 80 ? '#f85149' : (cpu > 50 ? '#d29922' : '#3fb950');
-            ramBar.style.background = ram > 85 ? '#f85149' : (ram > 65 ? '#d29922' : '#3fb950');
-
-            document.getElementById('status-indicator').style.background = '#2ea043';
+            var st = document.getElementById('status-indicator');
+            if (st) st.style.background = '#2ea043';
           } catch(e) {}
         }
       };
