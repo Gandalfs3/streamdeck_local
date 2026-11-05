@@ -1,0 +1,110 @@
+[
+  {
+    "id": "btn_1",
+    "title": "Anterior",
+    "theme": "theme-media",
+    "type": "system",
+    "action": "prev_track",
+    "target": "",
+    "icon": "prev"
+  },
+  {
+    "id": "btn_2",
+    "title": "Play / Pausa",
+    "theme": "theme-media",
+    "type": "system",
+    "action": "play_pause",
+    "target": "",
+    "icon": "play_pause"
+  },
+  {
+    "id": "btn_3",
+    "title": "Siguiente",
+    "theme": "theme-media",
+    "type": "system",
+    "action": "next_track",
+    "target": "",
+    "icon": "next"
+  },
+  {
+    "id": "btn_4",
+    "title": "Mutear",
+    "theme": "theme-danger",
+    "type": "system",
+    "action": "vol_mute",
+    "target": "",
+    "icon": "mute"
+  },
+  {
+    "id": "btn_5",
+    "title": "Volumen -",
+    "theme": "theme-sys",
+    "type": "system",
+    "action": "vol_down",
+    "target": "",
+    "icon": "vol_down"
+  },
+  {
+    "id": "btn_6",
+    "title": "Volumen +",
+    "theme": "theme-sys",
+    "type": "system",
+    "action": "vol_up",
+    "target": "",
+    "icon": "vol_up"
+  },
+  {
+    "id": "btn_7",
+    "title": "Escritorio",
+    "theme": "theme-sys",
+    "type": "system",
+    "action": "desktop",
+    "target": "",
+    "icon": "desktop"
+  },
+  {
+    "id": "btn_8",
+    "title": "Bloquear PC",
+    "theme": "theme-danger",
+    "type": "system",
+    "action": "lock_pc",
+    "target": "",
+    "icon": "lock"
+  },
+  {
+    "id": "btn_9",
+    "title": "VS Code",
+    "theme": "theme-dev",
+    "type": "app",
+    "action": "",
+    "target": "code",
+    "icon": "code"
+  },
+  {
+    "id": "btn_10",
+    "title": "Terminal",
+    "theme": "theme-dev",
+    "type": "app",
+    "action": "",
+    "target": "powershell",
+    "icon": "terminal"
+  },
+  {
+    "id": "btn_11",
+    "title": "¡Ta-dá! 🎉",
+    "theme": "theme-pink",
+    "type": "sound",
+    "action": "",
+    "target": "tada.wav",
+    "icon": "sound"
+  },
+  {
+    "id": "btn_12",
+    "title": "Calculadora",
+    "theme": "theme-util",
+    "type": "app",
+    "action": "",
+    "target": "calc",
+    "icon": "calc"
+  }
+]

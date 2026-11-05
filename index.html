@@ -236,6 +236,13 @@
       border-color: #58a6ff;
     }
 
+    .btn-edit-active {
+      background: #9e6a03 !important;
+      border-color: #f0883e !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(240, 136, 62, 0.4);
+    }
+
     /* MEDIA QUERIES RESPONSIVAS */
     @media (max-width: 850px) {
       .telemetry-group { display: none; }
@@ -338,7 +345,17 @@
       filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
     }
 
-    .deck-btn:active svg, .deck-btn.pressed svg {
+    .deck-btn .icon-emoji {
+      font-size: 32px;
+      margin-bottom: 6px;
+      line-height: 1;
+      display: inline-block;
+      transition: transform 0.12s ease;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+    }
+
+    .deck-btn:active svg, .deck-btn.pressed svg,
+    .deck-btn:active .icon-emoji, .deck-btn.pressed .icon-emoji {
       transform: scale(1.1);
     }
 
@@ -349,6 +366,53 @@
       letter-spacing: 0.4px;
       text-transform: capitalize;
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+      padding: 0 6px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Insignia de edicion sobre el boton */
+    .edit-badge {
+      display: none;
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: #d29922;
+      color: #ffffff;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      font-weight: bold;
+    }
+    .edit-mode .edit-badge {
+      display: block;
+      animation: pulse-badge 1.5s infinite;
+    }
+    @keyframes pulse-badge {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    /* Boton de agregar nuevo boton */
+    .deck-btn-add {
+      border: 2px dashed #30363d;
+      background: rgba(22, 27, 34, 0.6);
+      display: none;
+    }
+    .edit-mode .deck-btn-add {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+    }
+    .deck-btn-add:hover {
+      border-color: #58a6ff;
+      background: rgba(33, 38, 45, 0.8);
+    }
+    .deck-btn-add .btn-text {
+      color: #58a6ff;
     }
 
     /* PALETA POR CATEGORIAS */
@@ -403,6 +467,26 @@
       box-shadow: 0 0 25px rgba(227, 179, 65, 0.6);
     }
 
+    .theme-pink { border-color: rgba(219, 97, 162, 0.4); }
+    .theme-pink svg { stroke: #f778ba; stroke-width: 2.2; fill: none; }
+    .theme-pink:hover { border-color: #f778ba; box-shadow: 0 0 16px rgba(247, 120, 186, 0.25); }
+    .theme-pink:active, .theme-pink.pressed {
+      background: -webkit-linear-gradient(top, #4c1d39 0%, #290f1f 100%);
+      background: linear-gradient(180deg, #4c1d39 0%, #290f1f 100%);
+      border-color: #f778ba;
+      box-shadow: 0 0 25px rgba(247, 120, 186, 0.6);
+    }
+
+    .theme-cyan { border-color: rgba(56, 189, 248, 0.4); }
+    .theme-cyan svg { stroke: #38bdf8; stroke-width: 2.2; fill: none; }
+    .theme-cyan:hover { border-color: #38bdf8; box-shadow: 0 0 16px rgba(56, 189, 248, 0.25); }
+    .theme-cyan:active, .theme-cyan.pressed {
+      background: -webkit-linear-gradient(top, #143e59 0%, #0c2333 100%);
+      background: linear-gradient(180deg, #143e59 0%, #0c2333 100%);
+      border-color: #38bdf8;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+    }
+
     @media (max-width: 580px) {
       .deck-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -410,13 +494,151 @@
         gap: 8px;
       }
       .deck-btn svg { width: 30px; height: 30px; margin-bottom: 3px; }
+      .deck-btn .icon-emoji { font-size: 26px; margin-bottom: 3px; }
       .deck-btn .btn-text { font-size: 11px; }
     }
+
+    /* MODAL DE EDICIÓN */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 14px;
+    }
+    .modal-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      animation: modal-pop 0.2s ease;
+    }
+    @keyframes modal-pop {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .modal-header {
+      background: #21262d;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #30363d;
+    }
+    .modal-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #58a6ff;
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: #8b949e;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .modal-close:hover { color: #f85149; }
+    .modal-body {
+      padding: 16px;
+      max-height: 75vh;
+      overflow-y: auto;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #c9d1d9;
+      margin-bottom: 5px;
+    }
+    .form-control {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      color: #f0f6fc;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .form-control:focus {
+      border-color: #58a6ff;
+    }
+    .color-picker-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .color-chip {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+    .color-chip.selected {
+      border-color: #ffffff;
+      transform: scale(1.15);
+    }
+    .emoji-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .emoji-btn {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #f0f6fc;
+      font-size: 16px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .emoji-btn:hover {
+      background: #30363d;
+      border-color: #58a6ff;
+    }
+    .modal-footer {
+      background: #161b22;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #30363d;
+    }
+    .btn-modal {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-save { background: #238636; color: #ffffff; }
+    .btn-save:hover { background: #2ea043; }
+    .btn-delete { background: #da3633; color: #ffffff; }
+    .btn-delete:hover { background: #f85149; }
+    .btn-cancel { background: #21262d; color: #c9d1d9; }
+    .btn-cancel:hover { background: #30363d; }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
+  <div class="app-container" id="app-container">
 
     <!-- CABECERA SUPERIOR -->
     <div class="header-bar">
@@ -445,7 +667,11 @@
       </div>
 
       <div class="header-actions">
-        <button class="btn-action-top" id="btn-sound" onclick="toggleSound()" title="Activar/Silenciar Sonido">
+        <button class="btn-action-top" id="btn-edit" onclick="toggleEditMode()" title="Personalizar botones">
+          <span id="edit-icon">⚙️</span>
+          <span class="action-btn-text" id="edit-label">Personalizar</span>
+        </button>
+        <button class="btn-action-top" id="btn-sound" onclick="toggleSound()" title="Activar/Silenciar Sonido de pulsación">
           <span id="sound-icon">🔊</span>
           <span class="action-btn-text" id="sound-label">Sonido</span>
         </button>
@@ -456,134 +682,131 @@
       </div>
     </div>
 
-    <!-- GRILLA PRINCIPAL 12 BOTONES EXPANDIDOS -->
+    <!-- GRILLA STREAM DECK DINAMICA -->
     <div class="deck-viewport">
-      <div class="deck-grid">
-
-        <!-- BOTÓN 1: PISTA ANTERIOR -->
-        <div class="deck-btn theme-media" data-action="prev_track">
-          <svg viewBox="0 0 24 24">
-            <polygon points="11,5 11,19 2,12"></polygon>
-            <polygon points="22,5 22,19 13,12"></polygon>
-          </svg>
-          <span class="btn-text">Anterior</span>
-        </div>
-
-        <!-- BOTÓN 2: PLAY / PAUSA -->
-        <div class="deck-btn theme-media" data-action="play_pause">
-          <svg viewBox="0 0 24 24">
-            <polygon points="5,3 15,12 5,21"></polygon>
-            <rect x="17" y="4" width="4" height="16" rx="1"></rect>
-          </svg>
-          <span class="btn-text">Play / Pausa</span>
-        </div>
-
-        <!-- BOTÓN 3: PISTA SIGUIENTE -->
-        <div class="deck-btn theme-media" data-action="next_track">
-          <svg viewBox="0 0 24 24">
-            <polygon points="2,5 2,19 11,12"></polygon>
-            <polygon points="13,5 13,19 22,12"></polygon>
-          </svg>
-          <span class="btn-text">Siguiente</span>
-        </div>
-
-        <!-- BOTÓN 4: MUTEAR -->
-        <div class="deck-btn theme-danger" data-action="vol_mute">
-          <svg viewBox="0 0 24 24" class="stroke-only">
-            <polygon points="11,4 6,8 2,8 2,16 6,16 11,20"></polygon>
-            <line x1="23" y1="9" x2="17" y2="15"></line>
-            <line x1="17" y1="9" x2="23" y2="15"></line>
-          </svg>
-          <span class="btn-text">Mutear</span>
-        </div>
-
-        <!-- BOTÓN 5: VOLUMEN MENOS -->
-        <div class="deck-btn theme-sys" data-action="vol_down">
-          <svg viewBox="0 0 24 24" class="stroke-only">
-            <polygon points="11,4 6,8 2,8 2,16 6,16 11,20"></polygon>
-            <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
-          </svg>
-          <span class="btn-text">Volumen -</span>
-        </div>
-
-        <!-- BOTÓN 6: VOLUMEN MAS -->
-        <div class="deck-btn theme-sys" data-action="vol_up">
-          <svg viewBox="0 0 24 24" class="stroke-only">
-            <polygon points="11,4 6,8 2,8 2,16 6,16 11,20"></polygon>
-            <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
-            <path d="M19 5a10 10 0 0 1 0 14"></path>
-          </svg>
-          <span class="btn-text">Volumen +</span>
-        </div>
-
-        <!-- BOTÓN 7: MOSTRAR ESCRITORIO -->
-        <div class="deck-btn theme-sys" data-action="desktop">
-          <svg viewBox="0 0 24 24" class="stroke-only">
-            <rect x="2" y="3" width="20" height="14" rx="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
-          </svg>
-          <span class="btn-text">Escritorio</span>
-        </div>
-
-        <!-- BOTÓN 8: BLOQUEAR PC -->
-        <div class="deck-btn theme-danger" data-action="lock_pc">
-          <svg viewBox="0 0 24 24" class="stroke-only">
-            <rect x="3" y="11" width="18" height="11" rx="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
-          <span class="btn-text">Bloquear PC</span>
-        </div>
-
-        <!-- BOTÓN 9: VS CODE -->
-        <div class="deck-btn theme-dev" data-action="open_code">
-          <svg viewBox="0 0 24 24" class="stroke-only">
-            <polyline points="16 18 22 12 16 6"></polyline>
-            <polyline points="8 6 2 12 8 18"></polyline>
-          </svg>
-          <span class="btn-text">VS Code</span>
-        </div>
-
-        <!-- BOTÓN 10: TERMINAL -->
-        <div class="deck-btn theme-dev" data-action="open_terminal">
-          <svg viewBox="0 0 24 24" class="stroke-only">
-            <polyline points="4 17 10 11 4 5"></polyline>
-            <line x1="12" y1="19" x2="20" y2="19"></line>
-          </svg>
-          <span class="btn-text">Terminal</span>
-        </div>
-
-        <!-- BOTÓN 11: LOCALHOST / NAVEGADOR -->
-        <div class="deck-btn theme-util" data-action="open_browser">
-          <svg viewBox="0 0 24 24" class="stroke-only">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="2" y1="12" x2="22" y2="12"></line>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-          </svg>
-          <span class="btn-text">Localhost</span>
-        </div>
-
-        <!-- BOTÓN 12: CALCULADORA -->
-        <div class="deck-btn theme-util" data-action="open_calc">
-          <svg viewBox="0 0 24 24" class="stroke-only">
-            <rect x="4" y="2" width="16" height="20" rx="2"></rect>
-            <line x1="8" y1="6" x2="16" y2="6"></line>
-            <line x1="16" y1="14" x2="16" y2="18"></line>
-            <line x1="8" y1="12" x2="8" y2="12.01"></line>
-            <line x1="12" y1="12" x2="12" y2="12.01"></line>
-            <line x1="16" y1="12" x2="16" y2="12.01"></line>
-            <line x1="8" y1="16" x2="8" y2="16.01"></line>
-            <line x1="12" y1="16" x2="12" y2="16.01"></line>
-          </svg>
-          <span class="btn-text">Calculadora</span>
-        </div>
-
+      <div class="deck-grid" id="deck-grid">
+        <!-- Renderizado dinámicamente desde /api/buttons -->
       </div>
     </div>
 
   </div>
 
+  <!-- MODAL DE CONFIGURACION DE BOTON -->
+  <div class="modal-backdrop" id="edit-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-heading">🛠️ Configurar Botón</h3>
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="form-group">
+          <label>Nombre / Etiqueta del botón:</label>
+          <input type="text" id="cfg-title" class="form-control" placeholder="Ej. Spotify, YouTube, Meme...">
+        </div>
+
+        <div class="form-group">
+          <label>Tipo de Acción:</label>
+          <select id="cfg-type" class="form-control" onchange="onTypeChanged()">
+            <option value="url">🌐 Abrir Enlace Web (URL)</option>
+            <option value="app">🚀 Abrir Programa o App (.exe)</option>
+            <option value="sound">🔊 Efecto de Sonido (Soundboard)</option>
+            <option value="system">🎛️ Acción de Sistema / Hardware</option>
+          </select>
+        </div>
+
+        <!-- CAMPO URL -->
+        <div class="form-group" id="group-url">
+          <label>Enlace Web (URL):</label>
+          <input type="text" id="cfg-target-url" class="form-control" placeholder="https://youtube.com o https://chatgpt.com">
+        </div>
+
+        <!-- CAMPO APP -->
+        <div class="form-group" id="group-app" style="display:none;">
+          <label>Programa / Comando:</label>
+          <input type="text" id="cfg-target-app" class="form-control" placeholder="calc, notepad, code, o ruta C:\...exe">
+        </div>
+
+        <!-- CAMPO SOUNDBOARD -->
+        <div class="form-group" id="group-sound" style="display:none;">
+          <label>Archivo de Sonido (en carpeta sounds/):</label>
+          <div style="display:flex; gap:6px;">
+            <select id="cfg-target-sound" class="form-control">
+              <option value="">Seleccionar sonido...</option>
+            </select>
+            <button class="btn-action-top" type="button" onclick="testSelectedSound()">▶️ Probar</button>
+          </div>
+          <small style="color:#8b949e; font-size:10px; display:block; margin-top:4px;">
+            💡 Coloca tus archivos .mp3 o .wav en la carpeta <code>sounds/</code> de tu PC.
+          </small>
+        </div>
+
+        <!-- CAMPO SISTEMA -->
+        <div class="form-group" id="group-system" style="display:none;">
+          <label>Acción de Hardware:</label>
+          <select id="cfg-action-sys" class="form-control">
+            <option value="vol_up">🔊 Subir Volumen (+8%)</option>
+            <option value="vol_down">🔉 Bajar Volumen (-8%)</option>
+            <option value="vol_mute">🔇 Mutear / Desmutear</option>
+            <option value="desktop">🖥️ Mostrar Escritorio</option>
+            <option value="lock_pc">🔒 Bloquear PC</option>
+            <option value="play_pause">⏯️ Play / Pausa Multimedia</option>
+            <option value="next_track">⏭️ Pista Siguiente</option>
+            <option value="prev_track">⏮️ Pista Anterior</option>
+          </select>
+        </div>
+
+        <!-- COLOR TEMA -->
+        <div class="form-group">
+          <label>Color Neón:</label>
+          <div class="color-picker-row" id="color-chips">
+            <div class="color-chip" style="background:#2ea043;" data-theme="theme-media" title="Verde Multimedia"></div>
+            <div class="color-chip" style="background:#1f6feb;" data-theme="theme-sys" title="Azul Sistema"></div>
+            <div class="color-chip" style="background:#8957e5;" data-theme="theme-dev" title="Violeta Desarrollo"></div>
+            <div class="color-chip" style="background:#da3633;" data-theme="theme-danger" title="Rojo Peligro"></div>
+            <div class="color-chip" style="background:#d29922;" data-theme="theme-util" title="Ámbar Utilidades"></div>
+            <div class="color-chip" style="background:#db61a2;" data-theme="theme-pink" title="Rosa Neón"></div>
+            <div class="color-chip" style="background:#38bdf8;" data-theme="theme-cyan" title="Cian Neón"></div>
+          </div>
+        </div>
+
+        <!-- ICONO O EMOJI -->
+        <div class="form-group">
+          <label>Icono o Emoji:</label>
+          <input type="text" id="cfg-icon" class="form-control" placeholder="Ej. 🎉, 🎵, 🎮, code, globe, mute...">
+          <div class="emoji-row">
+            <button type="button" class="emoji-btn" onclick="selectEmoji('🎉')">🎉</button>
+            <button type="button" class="emoji-btn" onclick="selectEmoji('🎵')">🎵</button>
+            <button type="button" class="emoji-btn" onclick="selectEmoji('🎮')">🎮</button>
+            <button type="button" class="emoji-btn" onclick="selectEmoji('🚀')">🚀</button>
+            <button type="button" class="emoji-btn" onclick="selectEmoji('📺')">📺</button>
+            <button type="button" class="emoji-btn" onclick="selectEmoji('🔥')">🔥</button>
+            <button type="button" class="emoji-btn" onclick="selectEmoji('💬')">💬</button>
+            <button type="button" class="emoji-btn" onclick="selectEmoji('⭐')">⭐</button>
+            <button type="button" class="emoji-btn" onclick="selectEmoji('🎬')">🎬</button>
+            <button type="button" class="emoji-btn" onclick="selectEmoji('⚡')">⚡</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal btn-delete" id="btn-delete-modal" onclick="deleteCurrentButton()">🗑️ Eliminar</button>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-modal btn-cancel" onclick="closeEditModal()">Cancelar</button>
+          <button class="btn-modal btn-save" onclick="saveCurrentButton()">💾 Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // --- Estado Global ---
+    var buttonsData = [];
+    var soundFiles = [];
+    var editMode = false;
+    var currentEditingIndex = -1; // -1 = nuevo botón
+    var selectedTheme = 'theme-sys';
+
     // --- Sonido de pulsacion tactil con Web Audio API (Sin archivos externos) ---
     var soundEnabled = true;
     var audioCtx = null;
@@ -618,36 +841,288 @@
       if (lbl) lbl.innerHTML = soundEnabled ? 'Sonido' : 'Mudo';
     }
 
-    // --- Manejo de eventos tactiles y clics ---
-    var keys = document.getElementsByClassName('deck-btn');
-    for (var i = 0; i < keys.length; i++) {
-      (function(btn) {
-        var action = btn.getAttribute('data-action');
-        function handlePress(e) {
-          if (e && e.preventDefault) e.preventDefault();
-          
-          btn.className += ' pressed';
-          setTimeout(function() {
-            btn.className = btn.className.replace(' pressed', '');
-          }, 110);
+    // --- Mapa de Iconos SVG Vectoriales ---
+    var svgIcons = {
+      'prev': '<svg viewBox="0 0 24 24"><polygon points="11,5 11,19 2,12"></polygon><polygon points="22,5 22,19 13,12"></polygon></svg>',
+      'play_pause': '<svg viewBox="0 0 24 24"><polygon points="5,3 15,12 5,21"></polygon><rect x="17" y="4" width="4" height="16" rx="1"></rect></svg>',
+      'next': '<svg viewBox="0 0 24 24"><polygon points="2,5 2,19 11,12"></polygon><polygon points="13,5 13,19 22,12"></polygon></svg>',
+      'mute': '<svg viewBox="0 0 24 24" class="stroke-only"><polygon points="11,4 6,8 2,8 2,16 6,16 11,20"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>',
+      'vol_down': '<svg viewBox="0 0 24 24" class="stroke-only"><polygon points="11,4 6,8 2,8 2,16 6,16 11,20"></polygon><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>',
+      'vol_up': '<svg viewBox="0 0 24 24" class="stroke-only"><polygon points="11,4 6,8 2,8 2,16 6,16 11,20"></polygon><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M19 5a10 10 0 0 1 0 14"></path></svg>',
+      'desktop': '<svg viewBox="0 0 24 24" class="stroke-only"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>',
+      'lock': '<svg viewBox="0 0 24 24" class="stroke-only"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>',
+      'code': '<svg viewBox="0 0 24 24" class="stroke-only"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>',
+      'terminal': '<svg viewBox="0 0 24 24" class="stroke-only"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>',
+      'globe': '<svg viewBox="0 0 24 24" class="stroke-only"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"></path></svg>',
+      'calc': '<svg viewBox="0 0 24 24" class="stroke-only"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><line x1="8" y1="12" x2="8" y2="12.01"></line><line x1="12" y1="12" x2="12" y2="12.01"></line><line x1="16" y1="12" x2="16" y2="12.01"></line><line x1="8" y1="16" x2="8" y2="16.01"></line><line x1="12" y1="16" x2="12" y2="16.01"></line></svg>',
+      'sound': '<svg viewBox="0 0 24 24" class="stroke-only"><polygon points="11,4 6,8 2,8 2,16 6,16 11,20"></polygon><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M19 5a10 10 0 0 1 0 14"></path></svg>',
+      'music': '<svg viewBox="0 0 24 24" class="stroke-only"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>'
+    };
 
-          playTactileClick();
-          if (navigator.vibrate) {
-            try { navigator.vibrate(35); } catch(err) {}
+    function renderIcon(iconKey) {
+      if (svgIcons[iconKey]) {
+        return svgIcons[iconKey];
+      }
+      if (iconKey && iconKey.length > 0) {
+        return '<span class="icon-emoji">' + iconKey + '</span>';
+      }
+      return '<span class="icon-emoji">⚡</span>';
+    }
+
+    // --- Cargar y Renderizar Botones ---
+    function loadButtons() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/buttons', true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          try {
+            buttonsData = JSON.parse(xhr.responseText);
+            renderGrid();
+          } catch(e) {}
+        }
+      };
+      xhr.send();
+    }
+
+    function renderGrid() {
+      var grid = document.getElementById('deck-grid');
+      grid.innerHTML = '';
+
+      for (var i = 0; i < buttonsData.length; i++) {
+        (function(btn, idx) {
+          var el = document.createElement('div');
+          el.className = 'deck-btn ' + (btn.theme || 'theme-sys');
+          el.innerHTML = renderIcon(btn.icon) + 
+            '<span class="btn-text">' + (btn.title || 'Botón') + '</span>' +
+            '<span class="edit-badge">✏️</span>';
+
+          function doPress(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            if (editMode) {
+              openEditModal(idx);
+              return;
+            }
+
+            el.className += ' pressed';
+            setTimeout(function() {
+              el.className = el.className.replace(' pressed', '');
+            }, 110);
+
+            playTactileClick();
+            if (navigator.vibrate) {
+              try { navigator.vibrate(35); } catch(err) {}
+            }
+
+            // Ejecutar accion en el host
+            triggerAction(btn);
           }
 
-          var xhr = new XMLHttpRequest();
-          xhr.open('POST', '/api/action', true);
-          xhr.setRequestHeader('Content-Type', 'application/json');
-          xhr.send(JSON.stringify({ action: action }));
-        }
+          if ('ontouchstart' in window) {
+            el.ontouchstart = doPress;
+          } else {
+            el.onclick = doPress;
+          }
 
-        if ('ontouchstart' in window) {
-          btn.ontouchstart = handlePress;
-        } else {
-          btn.onclick = handlePress;
+          grid.appendChild(el);
+        })(buttonsData[i], i);
+      }
+
+      // Boton para agregar nuevo si esta en modo edicion
+      var addBtn = document.createElement('div');
+      addBtn.className = 'deck-btn deck-btn-add';
+      addBtn.innerHTML = '<span class="icon-emoji">➕</span><span class="btn-text">Nuevo Botón</span>';
+      addBtn.onclick = function() { openEditModal(-1); };
+      grid.appendChild(addBtn);
+    }
+
+    function triggerAction(btn) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/action', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({
+        type: btn.type || 'system',
+        action: btn.action || '',
+        target: btn.target || ''
+      }));
+    }
+
+    // --- Modo Edición ---
+    function toggleEditMode() {
+      editMode = !editMode;
+      var app = document.getElementById('app-container');
+      var btn = document.getElementById('btn-edit');
+      var icon = document.getElementById('edit-icon');
+      var label = document.getElementById('edit-label');
+
+      if (editMode) {
+        app.className += ' edit-mode';
+        btn.className += ' btn-edit-active';
+        icon.innerHTML = '💾';
+        label.innerHTML = 'Listo';
+      } else {
+        app.className = app.className.replace(' edit-mode', '');
+        btn.className = btn.className.replace(' btn-edit-active', '');
+        icon.innerHTML = '⚙️';
+        label.innerHTML = 'Personalizar';
+      }
+      renderGrid();
+    }
+
+    // --- Modal de Configuración ---
+    function openEditModal(index) {
+      currentEditingIndex = index;
+      var modal = document.getElementById('edit-modal');
+      var heading = document.getElementById('modal-heading');
+      var btnDelete = document.getElementById('btn-delete-modal');
+
+      loadSoundFiles();
+
+      if (index >= 0 && buttonsData[index]) {
+        var btn = buttonsData[index];
+        heading.innerHTML = '🛠️ Editar: ' + (btn.title || 'Botón');
+        document.getElementById('cfg-title').value = btn.title || '';
+        document.getElementById('cfg-type').value = btn.type || 'system';
+        document.getElementById('cfg-target-url').value = btn.type === 'url' ? (btn.target || '') : '';
+        document.getElementById('cfg-target-app').value = btn.type === 'app' ? (btn.target || '') : '';
+        document.getElementById('cfg-action-sys').value = btn.type === 'system' ? (btn.action || 'vol_up') : 'vol_up';
+        document.getElementById('cfg-icon').value = btn.icon || '';
+        selectedTheme = btn.theme || 'theme-sys';
+        btnDelete.style.display = 'block';
+      } else {
+        heading.innerHTML = '➕ Nuevo Botón';
+        document.getElementById('cfg-title').value = '';
+        document.getElementById('cfg-type').value = 'url';
+        document.getElementById('cfg-target-url').value = '';
+        document.getElementById('cfg-target-app').value = '';
+        document.getElementById('cfg-action-sys').value = 'vol_up';
+        document.getElementById('cfg-icon').value = '⭐';
+        selectedTheme = 'theme-cyan';
+        btnDelete.style.display = 'none';
+      }
+
+      updateColorChips();
+      onTypeChanged();
+      modal.style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').style.display = 'none';
+    }
+
+    function onTypeChanged() {
+      var type = document.getElementById('cfg-type').value;
+      document.getElementById('group-url').style.display = type === 'url' ? 'block' : 'none';
+      document.getElementById('group-app').style.display = type === 'app' ? 'block' : 'none';
+      document.getElementById('group-sound').style.display = type === 'sound' ? 'block' : 'none';
+      document.getElementById('group-system').style.display = type === 'system' ? 'block' : 'none';
+    }
+
+    function loadSoundFiles() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/sounds', true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          try {
+            soundFiles = JSON.parse(xhr.responseText);
+            var select = document.getElementById('cfg-target-sound');
+            select.innerHTML = '<option value="">Seleccionar sonido...</option>';
+            for (var i = 0; i < soundFiles.length; i++) {
+              var opt = document.createElement('option');
+              opt.value = soundFiles[i];
+              opt.innerHTML = soundFiles[i];
+              select.appendChild(opt);
+            }
+            if (currentEditingIndex >= 0 && buttonsData[currentEditingIndex]) {
+              select.value = buttonsData[currentEditingIndex].target || '';
+            }
+          } catch(e) {}
         }
-      })(keys[i]);
+      };
+      xhr.send();
+    }
+
+    function testSelectedSound() {
+      var snd = document.getElementById('cfg-target-sound').value;
+      if (snd) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/action', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({ type: 'sound', target: snd }));
+      }
+    }
+
+    function updateColorChips() {
+      var chips = document.getElementById('color-chips').getElementsByClassName('color-chip');
+      for (var i = 0; i < chips.length; i++) {
+        var th = chips[i].getAttribute('data-theme');
+        if (th === selectedTheme) {
+          chips[i].className = 'color-chip selected';
+        } else {
+          chips[i].className = 'color-chip';
+        }
+        chips[i].onclick = function() {
+          selectedTheme = this.getAttribute('data-theme');
+          updateColorChips();
+        };
+      }
+    }
+
+    function selectEmoji(em) {
+      document.getElementById('cfg-icon').value = em;
+    }
+
+    function saveCurrentButton() {
+      var title = document.getElementById('cfg-title').value.trim() || 'Botón';
+      var type = document.getElementById('cfg-type').value;
+      var icon = document.getElementById('cfg-icon').value.trim() || '⚡';
+      var target = '';
+      var action = '';
+
+      if (type === 'url') {
+        target = document.getElementById('cfg-target-url').value.trim();
+      } else if (type === 'app') {
+        target = document.getElementById('cfg-target-app').value.trim();
+      } else if (type === 'sound') {
+        target = document.getElementById('cfg-target-sound').value;
+      } else if (type === 'system') {
+        action = document.getElementById('cfg-action-sys').value;
+      }
+
+      var newBtn = {
+        id: currentEditingIndex >= 0 && buttonsData[currentEditingIndex] ? buttonsData[currentEditingIndex].id : ('btn_' + Date.now()),
+        title: title,
+        theme: selectedTheme,
+        type: type,
+        action: action,
+        target: target,
+        icon: icon
+      };
+
+      if (currentEditingIndex >= 0) {
+        buttonsData[currentEditingIndex] = newBtn;
+      } else {
+        buttonsData.push(newBtn);
+      }
+
+      persistButtons();
+      closeEditModal();
+      renderGrid();
+    }
+
+    function deleteCurrentButton() {
+      if (currentEditingIndex >= 0) {
+        buttonsData.splice(currentEditingIndex, 1);
+        persistButtons();
+        closeEditModal();
+        renderGrid();
+      }
+    }
+
+    function persistButtons() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/buttons', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({ buttons: buttonsData }));
     }
 
     // --- Modo Pantalla Completa ---
@@ -718,6 +1193,7 @@
 
     setInterval(updateTelemetry, 2500);
     updateTelemetry();
+    loadButtons();
   </script>
 </body>
 </html>
