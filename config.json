@@ -106,5 +106,14 @@
     "action": "",
     "target": "calc",
     "icon": "calc"
+  },
+  {
+    "id": "btn_1793915223043",
+    "title": "ta ta",
+    "theme": "theme-pink",
+    "type": "sound",
+    "action": "",
+    "target": "tada.wav",
+    "icon": "🎵"
   }
 ]

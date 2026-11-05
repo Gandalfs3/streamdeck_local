@@ -146,7 +146,7 @@ def save_buttons(buttons):
 def list_sounds():
     if not os.path.exists(SOUNDS_DIR):
         return []
-    valid_exts = {".mp3", ".wav", ".wma", ".ogg"}
+    valid_exts = {".mp3", ".wav", ".wma", ".ogg", ".m4a", ".aac"}
     files = []
     try:
         for f in os.listdir(SOUNDS_DIR):
@@ -169,6 +169,7 @@ def play_sound(filename):
         else:
             return False
 
+    filepath = os.path.normpath(filepath)
     ext = os.path.splitext(filepath)[1].lower()
     if ext == ".wav":
         try:
@@ -310,6 +311,13 @@ class StreamDeckHandler(http.server.BaseHTTPRequestHandler):
         self.send_response(404)
         self.end_headers()
 
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
+
     def do_POST(self):
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
@@ -340,6 +348,35 @@ class StreamDeckHandler(http.server.BaseHTTPRequestHandler):
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             self.wfile.write(json.dumps(res).encode("utf-8"))
+            return
+
+        if self.path == "/api/upload_sound":
+            filename = payload.get("filename", "")
+            b64data = payload.get("data", "")
+            if filename and b64data:
+                clean_name = os.path.basename(filename)
+                clean_name = re.sub(r'[<>:"/\\|?*]', '_', clean_name)
+                ext = os.path.splitext(clean_name)[1].lower()
+                valid_exts = {".mp3", ".wav", ".wma", ".ogg", ".m4a", ".aac"}
+                if ext in valid_exts:
+                    try:
+                        import base64
+                        file_bytes = base64.b64decode(b64data)
+                        dest_path = os.path.join(SOUNDS_DIR, clean_name)
+                        with open(dest_path, "wb") as f:
+                            f.write(file_bytes)
+                        res = {"status": "ok", "filename": clean_name, "sounds": list_sounds()}
+                    except Exception as e:
+                        res = {"status": "error", "message": f"Error guardando archivo: {e}"}
+                else:
+                    res = {"status": "error", "message": "Formato no compatible (.mp3, .wav, .wma, .ogg, .m4a)"}
+            else:
+                res = {"status": "error", "message": "Datos incompletos"}
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
             return
 
         self.send_response(404)

@@ -729,16 +729,22 @@
 
         <!-- CAMPO SOUNDBOARD -->
         <div class="form-group" id="group-sound" style="display:none;">
-          <label>Archivo de Sonido (en carpeta sounds/):</label>
-          <div style="display:flex; gap:6px;">
-            <select id="cfg-target-sound" class="form-control">
+          <label>Archivo de Sonido:</label>
+          <div style="display:flex; gap:6px; margin-bottom:8px;">
+            <select id="cfg-target-sound" class="form-control" onchange="onSoundSelectChanged()" style="flex:1;">
               <option value="">Seleccionar sonido...</option>
+              <option value="__upload__">➕ 📁 Seleccionar de mi PC...</option>
             </select>
-            <button class="btn-action-top" type="button" onclick="testSelectedSound()">▶️ Probar</button>
+            <button class="btn-action-top" type="button" onclick="testSelectedSound()" title="Probar sonido en PC">▶️ Probar</button>
           </div>
-          <small style="color:#8b949e; font-size:10px; display:block; margin-top:4px;">
-            💡 Coloca tus archivos .mp3 o .wav en la carpeta <code>sounds/</code> de tu PC.
-          </small>
+
+          <input type="file" id="sound-file-input" accept=".mp3,.wav,.ogg,.wma,.m4a,audio/*" style="display:none;" onchange="handleSoundFileUpload(this)">
+          
+          <button type="button" class="btn-action-top" style="width:100%; justify-content:center; gap:8px; padding:8px 12px; background:#21262d; border:1px dashed #58a6ff; color:#58a6ff; font-weight:600; border-radius:8px;" onclick="document.getElementById('sound-file-input').click()">
+            📂 Elegir sonido de mi PC (.mp3, .wav) y copiar
+          </button>
+          
+          <div id="sound-upload-status" style="font-size:11px; margin-top:6px; display:none; padding:6px 10px; border-radius:6px; background:#0d1117; border:1px solid #30363d;"></div>
         </div>
 
         <!-- CAMPO SISTEMA -->
@@ -969,17 +975,131 @@
     }
 
     // --- Modal de Configuración ---
+    function escapeHtml(str) {
+      if (!str) return '';
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function populateSoundDropdown(sounds, selectedVal) {
+      soundFiles = sounds || [];
+      var select = document.getElementById('cfg-target-sound');
+      select.innerHTML = '';
+      
+      var optDefault = document.createElement('option');
+      optDefault.value = '';
+      optDefault.textContent = '-- Seleccionar sonido --';
+      select.appendChild(optDefault);
+
+      var optUpload = document.createElement('option');
+      optUpload.value = '__upload__';
+      optUpload.textContent = '➕ 📁 Elegir archivo de mi PC...';
+      select.appendChild(optUpload);
+
+      for (var i = 0; i < soundFiles.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = soundFiles[i];
+        opt.textContent = '🎵 ' + soundFiles[i];
+        select.appendChild(opt);
+      }
+
+      if (selectedVal) {
+        select.value = selectedVal;
+      } else if (currentEditingIndex >= 0 && buttonsData[currentEditingIndex] && buttonsData[currentEditingIndex].type === 'sound') {
+        select.value = buttonsData[currentEditingIndex].target || '';
+      }
+    }
+
+    function loadSoundFiles(selectedVal) {
+      fetch('/api/sounds')
+        .then(function(res) { return res.json(); })
+        .then(function(sounds) {
+          populateSoundDropdown(sounds, selectedVal);
+        })
+        .catch(function() {});
+    }
+
+    function onSoundSelectChanged() {
+      var select = document.getElementById('cfg-target-sound');
+      if (select.value === '__upload__') {
+        document.getElementById('sound-file-input').click();
+      }
+    }
+
+    function handleSoundFileUpload(input) {
+      if (!input.files || !input.files[0]) return;
+      var file = input.files[0];
+      var statusDiv = document.getElementById('sound-upload-status');
+      
+      statusDiv.style.display = 'block';
+      statusDiv.style.color = '#58a6ff';
+      statusDiv.style.borderColor = '#1f6feb';
+      statusDiv.innerHTML = '⏳ Copiando <b>' + escapeHtml(file.name) + '</b> a la carpeta de sonidos...';
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var base64Data = e.target.result.split(',')[1];
+        fetch('/api/upload_sound', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, data: base64Data })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+          if (res.status === 'ok') {
+            statusDiv.style.color = '#3fb950';
+            statusDiv.style.borderColor = '#238636';
+            statusDiv.innerHTML = '✅ ¡Copiado con éxito a <code>sounds/' + escapeHtml(res.filename) + '</code>!';
+            populateSoundDropdown(res.sounds, res.filename);
+            
+            // Sugerir nombre e icono automáticamente si está vacío o por defecto
+            var titleInput = document.getElementById('cfg-title');
+            if (!titleInput.value || titleInput.value === 'Botón' || titleInput.value === '¡Ta-dá! 🎉') {
+              var cleanTitle = res.filename.replace(/\.[^/.]+$/, "");
+              titleInput.value = cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1);
+            }
+            var iconInput = document.getElementById('cfg-icon');
+            if (!iconInput.value || iconInput.value === '⭐') {
+              iconInput.value = '🔊';
+            }
+          } else {
+            statusDiv.style.color = '#f85149';
+            statusDiv.style.borderColor = '#da3633';
+            statusDiv.innerHTML = '❌ Error: ' + (res.message || 'No se pudo guardar el archivo');
+            var select = document.getElementById('cfg-target-sound');
+            if (select.value === '__upload__') select.value = '';
+          }
+          input.value = '';
+        })
+        .catch(function(err) {
+          statusDiv.style.color = '#f85149';
+          statusDiv.style.borderColor = '#da3633';
+          statusDiv.innerHTML = '❌ Error de red al copiar el archivo.';
+          input.value = '';
+          var select = document.getElementById('cfg-target-sound');
+          if (select.value === '__upload__') select.value = '';
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+
     function openEditModal(index) {
       currentEditingIndex = index;
       var modal = document.getElementById('edit-modal');
       var heading = document.getElementById('modal-heading');
       var btnDelete = document.getElementById('btn-delete-modal');
+      var statusDiv = document.getElementById('sound-upload-status');
+      if (statusDiv) {
+        statusDiv.style.display = 'none';
+        statusDiv.innerHTML = '';
+      }
 
       loadSoundFiles();
 
       if (index >= 0 && buttonsData[index]) {
         var btn = buttonsData[index];
-        heading.innerHTML = '🛠️ Editar: ' + (btn.title || 'Botón');
+        heading.innerHTML = '🛠️ Editar: ' + escapeHtml(btn.title || 'Botón');
         document.getElementById('cfg-title').value = btn.title || '';
         document.getElementById('cfg-type').value = btn.type || 'system';
         document.getElementById('cfg-target-url').value = btn.type === 'url' ? (btn.target || '') : '';
@@ -1017,37 +1137,14 @@
       document.getElementById('group-system').style.display = type === 'system' ? 'block' : 'none';
     }
 
-    function loadSoundFiles() {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', '/api/sounds', true);
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          try {
-            soundFiles = JSON.parse(xhr.responseText);
-            var select = document.getElementById('cfg-target-sound');
-            select.innerHTML = '<option value="">Seleccionar sonido...</option>';
-            for (var i = 0; i < soundFiles.length; i++) {
-              var opt = document.createElement('option');
-              opt.value = soundFiles[i];
-              opt.innerHTML = soundFiles[i];
-              select.appendChild(opt);
-            }
-            if (currentEditingIndex >= 0 && buttonsData[currentEditingIndex]) {
-              select.value = buttonsData[currentEditingIndex].target || '';
-            }
-          } catch(e) {}
-        }
-      };
-      xhr.send();
-    }
-
     function testSelectedSound() {
       var snd = document.getElementById('cfg-target-sound').value;
-      if (snd) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/action', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({ type: 'sound', target: snd }));
+      if (snd && snd !== '__upload__') {
+        fetch('/api/action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'sound', target: snd })
+        });
       }
     }
 
@@ -1084,6 +1181,11 @@
         target = document.getElementById('cfg-target-app').value.trim();
       } else if (type === 'sound') {
         target = document.getElementById('cfg-target-sound').value;
+        if (target === '__upload__') target = '';
+        if (!target) {
+          alert('Por favor selecciona un sonido de la lista o elige un archivo desde tu PC.');
+          return;
+        }
       } else if (type === 'system') {
         action = document.getElementById('cfg-action-sys').value;
       }
