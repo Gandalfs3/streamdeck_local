@@ -50,15 +50,16 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      background: rgba(22, 27, 34, 0.9);
+      background: rgba(22, 27, 34, 0.95);
       border: 1px solid rgba(48, 54, 61, 0.8);
       border-radius: 12px;
-      padding: 8px 14px;
+      padding: 8px 12px;
       margin-bottom: 10px;
       flex-shrink: 0;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-      gap: 10px;
-      overflow: hidden;
+      gap: 8px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .brand-section {
@@ -68,15 +69,15 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      gap: 8px;
-      white-space: nowrap;
-      flex-shrink: 0;
+      gap: 6px;
+      min-width: 0;
+      flex-shrink: 1;
     }
 
     .status-indicator {
       display: inline-block;
-      width: 11px;
-      height: 11px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background: #2ea043;
       box-shadow: 0 0 10px #3fb950;
@@ -90,26 +91,28 @@
     }
 
     .brand-title {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.5px;
       background: -webkit-linear-gradient(45deg, #58a6ff, #79c0ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       color: #58a6ff;
       text-transform: uppercase;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .brand-badge {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
       background: #1f6feb;
       color: #ffffff;
-      padding: 2px 6px;
-      border-radius: 5px;
+      padding: 1px 5px;
+      border-radius: 4px;
       letter-spacing: 0.4px;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .author-badge {
@@ -123,10 +126,11 @@
       text-decoration: none;
       background: #161b22;
       border: 1px solid #30363d;
-      padding: 3px 8px;
+      padding: 2px 7px;
       border-radius: 6px;
       white-space: nowrap;
       transition: all 0.2s ease;
+      flex-shrink: 0;
     }
 
     .author-badge:hover, .author-badge:active {
@@ -202,6 +206,7 @@
       display: flex;
       gap: 6px;
       flex-shrink: 0;
+      margin-left: auto;
       white-space: nowrap;
     }
 
@@ -229,6 +234,28 @@
       background: #30363d;
       color: #ffffff;
       border-color: #58a6ff;
+    }
+
+    /* MEDIA QUERIES RESPONSIVAS */
+    @media (max-width: 850px) {
+      .telemetry-group { display: none; }
+    }
+
+    @media (max-width: 650px) {
+      .action-btn-text { display: none; }
+      .btn-action-top {
+        padding: 6px 10px;
+        font-size: 13px;
+      }
+      .brand-badge { display: none; }
+      .author-prefix { display: none; }
+    }
+
+    @media (max-width: 440px) {
+      .brand-title { font-size: 12px; }
+      .author-heart { display: none; }
+      .author-badge { font-size: 10px; padding: 2px 5px; }
+      .btn-action-top { padding: 5px 8px; }
     }
 
     /* GRILLA STREAM DECK */
@@ -376,16 +403,6 @@
       box-shadow: 0 0 25px rgba(227, 179, 65, 0.6);
     }
 
-    /* RESPONSIVE DESIGN */
-    @media (max-width: 780px) {
-      .telemetry-group { display: none; }
-      .brand-title { font-size: 14px; }
-      .full-text { display: none; }
-      .short-text { display: inline; }
-    }
-    @media (min-width: 781px) {
-      .short-text { display: none; }
-    }
     @media (max-width: 580px) {
       .deck-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -394,8 +411,6 @@
       }
       .deck-btn svg { width: 30px; height: 30px; margin-bottom: 3px; }
       .deck-btn .btn-text { font-size: 11px; }
-      .brand-badge { display: none; }
-      .author-name { display: none; }
     }
   </style>
 </head>
@@ -410,7 +425,9 @@
         <span class="brand-title">STREAM DECK</span>
         <span class="brand-badge">PRO</span>
         <a href="https://github.com/Gandalfs3" target="_blank" class="author-badge" title="Creado por Gandalfs3">
-          <span>❤️</span> <span class="author-label">por</span> <strong>@Gandalfs3</strong>
+          <span class="author-heart">❤️</span>
+          <span class="author-prefix">por </span>
+          <strong class="author-name">@Gandalfs3</strong>
         </a>
       </div>
 
@@ -428,13 +445,13 @@
       </div>
 
       <div class="header-actions">
-        <button class="btn-action-top" id="btn-sound" onclick="toggleSound()">
-          <span id="sound-icon">🔊</span> <span id="sound-label">Sonido</span>
+        <button class="btn-action-top" id="btn-sound" onclick="toggleSound()" title="Activar/Silenciar Sonido">
+          <span id="sound-icon">🔊</span>
+          <span class="action-btn-text" id="sound-label">Sonido</span>
         </button>
         <button class="btn-action-top" onclick="toggleFullScreen()" title="Modo Pantalla Completa">
           <span>⛶</span> 
-          <span class="full-text">Pantalla Completa</span>
-          <span class="short-text">Full</span>
+          <span class="action-btn-text">Pantalla</span>
         </button>
       </div>
     </div>
@@ -597,7 +614,8 @@
     function toggleSound() {
       soundEnabled = !soundEnabled;
       document.getElementById('sound-icon').innerHTML = soundEnabled ? '🔊' : '🔇';
-      document.getElementById('sound-label').innerHTML = soundEnabled ? 'Sonido' : 'Mudo';
+      var lbl = document.getElementById('sound-label');
+      if (lbl) lbl.innerHTML = soundEnabled ? 'Sonido' : 'Mudo';
     }
 
     // --- Manejo de eventos tactiles y clics ---
