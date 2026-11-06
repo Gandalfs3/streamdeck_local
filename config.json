@@ -133,5 +133,14 @@
     "action": "vol_mute",
     "target": "",
     "icon": "📺"
+  },
+  {
+    "id": "btn_1793972916434",
+    "title": "Cliq",
+    "theme": "theme-sys",
+    "type": "app",
+    "action": "",
+    "target": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Notepad++.lnk",
+    "icon": "💬"
   }
 ]

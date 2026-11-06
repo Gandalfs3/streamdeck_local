@@ -254,6 +254,51 @@ def list_installed_apps():
     cached_apps = builtin + installed
     return cached_apps
 
+def launch_app(target):
+    if not target:
+        return False
+    target = target.strip()
+    if target.lower() == "code":
+        code_path = os.path.expandvars(r"%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe")
+        if os.path.exists(code_path):
+            target = code_path
+
+    # Asegurar que el hilo actual apunte al escritorio interactivo del usuario
+    try:
+        hDesk = ctypes.windll.user32.OpenInputDesktop(0, False, 0x01FF)
+        if hDesk:
+            ctypes.windll.user32.SetThreadDesktop(hDesk)
+    except Exception:
+        pass
+
+    # Metodo 1: ShellExecuteW con SW_SHOWNORMAL (1) - abre .lnk, ejecutables, URL y esquemas URI en pantalla visible
+    try:
+        ret = ctypes.windll.shell32.ShellExecuteW(0, "open", target, None, None, 1)
+        if ret > 32:
+            return True
+    except Exception:
+        pass
+
+    # Metodo 2: os.startfile nativo
+    try:
+        os.startfile(target)
+        return True
+    except Exception:
+        pass
+
+    # Metodo 3: subprocess con lpDesktop explicitamente apuntado a WinSta0\Default
+    try:
+        si = subprocess.STARTUPINFO()
+        si.lpDesktop = r"WinSta0\Default"
+        si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        si.wShowWindow = 1
+        subprocess.Popen(f'cmd.exe /c start "" "{target}"', shell=True, startupinfo=si)
+        return True
+    except Exception:
+        pass
+
+    return False
+
 def handle_action_request(data):
     action_type = data.get("type", "")
     action = data.get("action", "")
@@ -266,31 +311,11 @@ def handle_action_request(data):
         if target:
             if not target.startswith("http://") and not target.startswith("https://"):
                 target = "https://" + target
-            subprocess.Popen(f'start "" "{target}"', shell=True)
-            return True
+            return launch_app(target)
 
     elif action_type == "app":
         if target:
-            target = target.strip()
-            if target.lower() == "code":
-                code_path = os.path.expandvars(r"%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe")
-                if os.path.exists(code_path):
-                    target = code_path
-            try:
-                os.startfile(target)
-                return True
-            except Exception:
-                pass
-            try:
-                subprocess.Popen(f'start "" "{target}"', shell=True, creationflags=CREATE_NO_WINDOW)
-                return True
-            except Exception:
-                pass
-            try:
-                subprocess.Popen(target, shell=True, creationflags=CREATE_NO_WINDOW)
-                return True
-            except Exception:
-                pass
+            return launch_app(target)
 
     elif action_type == "system":
         execute_action(action)
@@ -318,17 +343,13 @@ def execute_action(action):
     elif action == "prev_track":
         run_audio_tool("prev")
     elif action == "open_code":
-        code_path = os.path.expandvars(r"%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe")
-        if os.path.exists(code_path):
-            os.startfile(code_path)
-        else:
-            subprocess.Popen("start code", shell=True, creationflags=CREATE_NO_WINDOW)
+        launch_app("code")
     elif action == "open_terminal":
-        subprocess.Popen("start powershell", shell=True, creationflags=CREATE_NO_WINDOW)
+        launch_app("powershell")
     elif action == "open_browser":
-        os.startfile("http://localhost:3000")
+        launch_app("http://localhost:5000")
     elif action == "open_calc":
-        subprocess.Popen("calc", creationflags=CREATE_NO_WINDOW)
+        launch_app("calc")
     elif action == "lock_pc":
         ctypes.windll.user32.LockWorkStation()
 

@@ -944,10 +944,12 @@
             triggerAction(btn);
           }
 
+          el.onclick = doPress;
           if ('ontouchstart' in window) {
-            el.ontouchstart = doPress;
-          } else {
-            el.onclick = doPress;
+            el.ontouchstart = function(e) {
+              doPress(e);
+              if (e && e.cancelable) e.preventDefault();
+            };
           }
 
           grid.appendChild(el);
@@ -1192,11 +1194,26 @@
 
     function testSelectedApp() {
       var target = document.getElementById('cfg-target-app').value.trim();
+      var btn = event && event.target ? event.target : null;
       if (target) {
+        if (btn) btn.innerHTML = '⏳ Abriendo...';
         fetch('/api/action', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'app', target: target })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+          if (btn) {
+            btn.innerHTML = res.status === 'ok' ? '✅ ¡Abierto!' : '❌ Error';
+            setTimeout(function() { btn.innerHTML = '🚀 Probar'; }, 1800);
+          }
+        })
+        .catch(function() {
+          if (btn) {
+            btn.innerHTML = '❌ Error';
+            setTimeout(function() { btn.innerHTML = '🚀 Probar'; }, 1800);
+          }
         });
       } else {
         alert('Por favor selecciona primero un programa de la lista.');
@@ -1261,11 +1278,26 @@
 
     function testSelectedSound() {
       var snd = document.getElementById('cfg-target-sound').value;
+      var btn = event && event.target ? event.target : null;
       if (snd && snd !== '__upload__') {
+        if (btn) btn.innerHTML = '⏳ Sonando...';
         fetch('/api/action', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'sound', target: snd })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+          if (btn) {
+            btn.innerHTML = res.status === 'ok' ? '🔊 Sonando' : '❌ Error';
+            setTimeout(function() { btn.innerHTML = '▶️ Probar'; }, 1800);
+          }
+        })
+        .catch(function() {
+          if (btn) {
+            btn.innerHTML = '❌ Error';
+            setTimeout(function() { btn.innerHTML = '▶️ Probar'; }, 1800);
+          }
         });
       }
     }
