@@ -136,11 +136,11 @@
   },
   {
     "id": "btn_1793972916434",
-    "title": "Cliq",
-    "theme": "theme-sys",
+    "title": "edge",
+    "theme": "theme-danger",
     "type": "app",
     "action": "",
-    "target": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Notepad++.lnk",
+    "target": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Microsoft Edge.lnk",
     "icon": "💬"
   }
 ]

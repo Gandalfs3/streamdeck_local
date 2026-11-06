@@ -78,6 +78,26 @@ class Program {
                 shell.ToggleDesktop();
                 Console.WriteLine("Escritorio conmutado con exito");
             }
+            else if (cmd == "launch" && args.Length > 1) {
+                string target = args[1];
+                try {
+                    System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo();
+                    psi.FileName = target;
+                    psi.UseShellExecute = true;
+                    System.Diagnostics.Process.Start(psi);
+                    Console.WriteLine("Lanzado con exito via Process.Start: " + target);
+                } catch (Exception ex) {
+                    Console.WriteLine("Error Process.Start: " + ex.Message);
+                    try {
+                        Type shellType = Type.GetTypeFromProgID("Shell.Application");
+                        dynamic shell = Activator.CreateInstance(shellType);
+                        shell.ShellExecute(target, "", "", "open", 1);
+                        Console.WriteLine("Lanzado con exito via Shell.Application: " + target);
+                    } catch (Exception ex2) {
+                        Console.WriteLine("Error Shell.Application: " + ex2.Message);
+                    }
+                }
+            }
             else if (cmd == "play_pause") {
                 keybd_event(0xB3, 0, 1, 0);
                 keybd_event(0xB3, 0, 3, 0);

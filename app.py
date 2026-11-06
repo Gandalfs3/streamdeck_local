@@ -263,15 +263,15 @@ def launch_app(target):
         if os.path.exists(code_path):
             target = code_path
 
-    # Asegurar que el hilo actual apunte al escritorio interactivo del usuario
-    try:
-        hDesk = ctypes.windll.user32.OpenInputDesktop(0, False, 0x01FF)
-        if hDesk:
-            ctypes.windll.user32.SetThreadDesktop(hDesk)
-    except Exception:
-        pass
+    # Metodo 1: audio_tool.exe nativo (.NET Process.Start con UseShellExecute)
+    if os.path.exists(AUDIO_TOOL_PATH):
+        try:
+            p = subprocess.Popen([AUDIO_TOOL_PATH, "launch", target])
+            return True
+        except Exception:
+            pass
 
-    # Metodo 1: ShellExecuteW con SW_SHOWNORMAL (1) - abre .lnk, ejecutables, URL y esquemas URI en pantalla visible
+    # Metodo 2: ShellExecuteW
     try:
         ret = ctypes.windll.shell32.ShellExecuteW(0, "open", target, None, None, 1)
         if ret > 32:
@@ -279,20 +279,16 @@ def launch_app(target):
     except Exception:
         pass
 
-    # Metodo 2: os.startfile nativo
+    # Metodo 3: os.startfile nativo
     try:
         os.startfile(target)
         return True
     except Exception:
         pass
 
-    # Metodo 3: subprocess con lpDesktop explicitamente apuntado a WinSta0\Default
+    # Metodo 4: cmd start
     try:
-        si = subprocess.STARTUPINFO()
-        si.lpDesktop = r"WinSta0\Default"
-        si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        si.wShowWindow = 1
-        subprocess.Popen(f'cmd.exe /c start "" "{target}"', shell=True, startupinfo=si)
+        subprocess.Popen(f'cmd.exe /c start "" "{target}"', shell=True)
         return True
     except Exception:
         pass
@@ -427,6 +423,7 @@ class StreamDeckHandler(http.server.BaseHTTPRequestHandler):
 
         if self.path == "/api/action":
             success = handle_action_request(payload)
+            print(f"[ACTION] {payload} -> success={success}", flush=True)
             res = {"status": "ok" if success else "error"}
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
