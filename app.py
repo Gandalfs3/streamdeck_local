@@ -46,6 +46,13 @@ if not os.path.exists(SOUNDS_DIR):
     except Exception:
         pass
 
+ICONS_DIR = os.path.join(APP_DIR, "icons")
+if not os.path.exists(ICONS_DIR):
+    try:
+        os.makedirs(ICONS_DIR, exist_ok=True)
+    except Exception:
+        pass
+
 # --- Telemetria Nativa de Windows (Sin psutil) ---
 class FILETIME(ctypes.Structure):
     _fields_ = [("dwLowDateTime", wintypes.DWORD), ("dwHighDateTime", wintypes.DWORD)]
@@ -192,6 +199,18 @@ def play_sound(filename):
         pass
     return False
 
+def stop_all_sounds():
+    try:
+        import winsound
+        winsound.PlaySound(None, 0)
+    except Exception:
+        pass
+    try:
+        ctypes.windll.winmm.mciSendStringW('close all', None, 0, None)
+        return True
+    except Exception:
+        return False
+
 cached_apps = None
 
 def list_installed_apps():
@@ -308,6 +327,9 @@ def handle_action_request(data):
     action = data.get("action", "")
     target = data.get("target", "")
 
+    if action == "stop_all_sounds" or action_type == "sound_stop":
+        return stop_all_sounds()
+
     if action_type == "sound":
         return play_sound(target)
 
@@ -320,6 +342,11 @@ def handle_action_request(data):
     elif action_type == "app":
         if target:
             return launch_app(target)
+
+    elif action_type == "hotkey":
+        if target:
+            run_audio_tool(f"hotkey {target}")
+            return True
 
     elif action_type == "system":
         execute_action(action)
@@ -354,6 +381,8 @@ def execute_action(action):
         launch_app("http://localhost:5000")
     elif action == "open_calc":
         launch_app("calc")
+    elif action == "stop_all_sounds":
+        stop_all_sounds()
     elif action == "lock_pc":
         ctypes.windll.user32.LockWorkStation()
 
@@ -394,6 +423,22 @@ class StreamDeckHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps(list_installed_apps(), ensure_ascii=False).encode("utf-8"))
             return
+
+        if self.path.startswith("/icons/"):
+            icon_file = os.path.basename(self.path)
+            full_path = os.path.join(ICONS_DIR, icon_file)
+            if os.path.exists(full_path):
+                ext = os.path.splitext(icon_file)[1].lower()
+                mime = "image/png" if ext == ".png" else ("image/jpeg" if ext in [".jpg", ".jpeg"] else ("image/svg+xml" if ext == ".svg" else "application/octet-stream"))
+                with open(full_path, "rb") as f:
+                    data = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", mime)
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.send_header("Cache-Control", "public, max-age=86400")
+                self.end_headers()
+                self.wfile.write(data)
+                return
 
         if self.path == "/" or self.path == "/index.html":
             if os.path.exists(INDEX_HTML_PATH):
@@ -491,6 +536,35 @@ class StreamDeckHandler(http.server.BaseHTTPRequestHandler):
                     res = {"status": "error", "message": "Formato no compatible (.mp3, .wav, .wma, .ogg, .m4a)"}
             else:
                 res = {"status": "error", "message": "Datos incompletos"}
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+            return
+
+        if self.path == "/api/upload_icon":
+            filename = payload.get("filename", "")
+            b64data = payload.get("data", "")
+            if filename and b64data:
+                clean_name = os.path.basename(filename)
+                clean_name = re.sub(r'[<>:"/\\|?*]', '_', clean_name)
+                ext = os.path.splitext(clean_name)[1].lower()
+                valid_exts = {".png", ".jpg", ".jpeg", ".svg", ".webp", ".ico"}
+                if ext in valid_exts:
+                    dest_path = os.path.join(ICONS_DIR, clean_name)
+                    try:
+                        import base64
+                        file_bytes = base64.b64decode(b64data)
+                        with open(dest_path, "wb") as f:
+                            f.write(file_bytes)
+                        res = {"status": "ok", "url": f"/icons/{clean_name}", "filename": clean_name}
+                    except Exception as e:
+                        res = {"status": "error", "message": str(e)}
+                else:
+                    res = {"status": "error", "message": "Formato no soportado (usa PNG, JPG, SVG o WebP)"}
+            else:
+                res = {"status": "error", "message": "Faltan datos del archivo"}
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Access-Control-Allow-Origin", "*")

@@ -48,6 +48,51 @@ class Program {
     [DllImport("user32.dll", SetLastError = true)]
     static extern bool SetThreadDesktop(IntPtr hDesktop);
 
+    static byte ParseKey(string k) {
+        k = k.Trim().ToLower();
+        if (k == "ctrl" || k == "control") return 0x11;
+        if (k == "shift") return 0x10;
+        if (k == "alt") return 0x12;
+        if (k == "win" || k == "windows") return 0x5B;
+        if (k == "enter" || k == "return") return 0x0D;
+        if (k == "esc" || k == "escape") return 0x1B;
+        if (k == "space" || k == "espacio") return 0x20;
+        if (k == "tab") return 0x09;
+        if (k == "backspace") return 0x08;
+        if (k.StartsWith("f") && k.Length > 1) {
+            int fNum;
+            if (int.TryParse(k.Substring(1), out fNum) && fNum >= 1 && fNum <= 24) {
+                return (byte)(0x6F + fNum);
+            }
+        }
+        if (k.Length == 1) {
+            char c = char.ToUpper(k[0]);
+            if ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
+                return (byte)c;
+            }
+        }
+        return 0;
+    }
+
+    static void SendHotkey(string combo) {
+        string[] parts = combo.Split(new char[] { '+', '-', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        var keys = new System.Collections.Generic.List<byte>();
+        foreach (var p in parts) {
+            byte vk = ParseKey(p);
+            if (vk != 0) keys.Add(vk);
+        }
+        if (keys.Count == 0) return;
+
+        for (int i = 0; i < keys.Count; i++) {
+            keybd_event(keys[i], 0, 0, 0);
+        }
+        System.Threading.Thread.Sleep(50);
+        for (int i = keys.Count - 1; i >= 0; i--) {
+            keybd_event(keys[i], 0, 2, 0);
+        }
+        Console.WriteLine("Atajo enviado: " + combo);
+    }
+
     static IAudioEndpointVolume GetVolume() {
         var enumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator;
         IMMDevice dev;
@@ -162,6 +207,10 @@ class Program {
             else if (cmd == "prev") {
                 keybd_event(0xB1, 0, 1, 0);
                 keybd_event(0xB1, 0, 3, 0);
+            }
+            else if (cmd == "hotkey" && args.Length > 1) {
+                string combo = string.Join(" ", args, 1, args.Length - 1).Trim().ToLower();
+                SendHotkey(combo);
             }
         } catch (Exception ex) {
             Console.WriteLine("Error: " + ex.Message);
