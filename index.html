@@ -1249,17 +1249,37 @@
           <!-- CAMPO HOTKEY -->
           <div class="form-group" id="group-hotkey" style="display:none;">
             <label>Combinación de Teclas (Hotkey / Macro):</label>
-            <input type="text" id="cfg-target-hotkey" class="form-control" placeholder="Ej. Ctrl+Shift+M, Alt+Tab, F13, Ctrl+C">
+            <div style="display:flex; gap:8px; margin-bottom:8px;">
+              <input type="text" id="cfg-target-hotkey" class="form-control" style="flex:1;" placeholder="Ej. Ctrl+Shift+M, Alt+Tab, F13, Ctrl+C">
+              <button type="button" id="btn-record-hotkey" class="btn btn-secondary" onclick="toggleRecordHotkey()" title="Detecta automáticamente las teclas que pulses en tu teclado" style="white-space:nowrap; padding:6px 12px; font-size:12px;">
+                🔴 Grabar Teclas
+              </button>
+            </div>
+            
+            <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+              <button type="button" class="btn btn-primary" onclick="testCurrentHotkey()" style="font-size:12px; padding:6px 14px;">
+                ⚡ Probar Atajo / Macro
+              </button>
+              <div id="hotkey-test-status" style="font-size:12px; display:none; padding:4px 8px; border-radius:4px; background:#161b22; border:1px solid #30363d;"></div>
+            </div>
+
             <small style="color:#8b949e; font-size:11px; display:block; margin:6px 0 4px 0;">
-              💡 Pulsa un atajo rápido:
+              💡 Pulsa un atajo rápido sugerido:
             </small>
             <div class="emoji-row">
-              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+shift+m'" style="font-size:11px;">Mute Discord/OBS</button>
               <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='alt+tab'" style="font-size:11px;">Alt+Tab</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+shift+m'" style="font-size:11px;">Mute Discord/OBS</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='win+d'" style="font-size:11px;">Win+D Escritorio</button>
               <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='f13'" style="font-size:11px;">F13</button>
               <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='f14'" style="font-size:11px;">F14</button>
               <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+c'" style="font-size:11px;">Copiar</button>
               <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+v'" style="font-size:11px;">Pegar</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+z'" style="font-size:11px;">Deshacer</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='win+g'" style="font-size:11px;">Xbox Game Bar</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+shift+esc'" style="font-size:11px;">Admin Tareas</button>
+            </div>
+            <div style="font-size:11px; color:#8b949e; margin-top:8px; line-height:1.4;">
+              <b>Macros avanzadas:</b> Puedes encadenar acciones separadas por coma (ej. <code>ctrl+a, ctrl+c</code>), añadir pausas (ej. <code>wait:500</code>) o escribir texto automático (ej. <code>text:Hola Stream</code>).
             </div>
           </div>
 
@@ -2301,6 +2321,9 @@
     }
 
     function closeEditModal() {
+      stopRecordingHotkey();
+      var hst = document.getElementById('hotkey-test-status');
+      if (hst) hst.style.display = 'none';
       document.getElementById('edit-modal').style.display = 'none';
     }
 
@@ -2614,6 +2637,102 @@
     updateTelemetry();
     loadButtons();
     window.addEventListener('resize', renderGrid);
+  
+    // --- Grabador y Probador de Atajos / Macros ---
+    var isRecordingHotkey = false;
+
+    function toggleRecordHotkey() {
+      var btn = document.getElementById('btn-record-hotkey');
+      var input = document.getElementById('cfg-target-hotkey');
+      if (isRecordingHotkey) {
+        stopRecordingHotkey();
+      } else {
+        isRecordingHotkey = true;
+        if (btn) {
+          btn.style.background = '#f85149';
+          btn.style.color = '#fff';
+          btn.innerHTML = '⏹️ Grabando... Presiona teclas';
+        }
+        if (input) {
+          input.placeholder = 'Presiona teclas en tu teclado (ej. Ctrl+Alt+F)...';
+          input.focus();
+        }
+      }
+    }
+
+    function stopRecordingHotkey() {
+      isRecordingHotkey = false;
+      var btn = document.getElementById('btn-record-hotkey');
+      var input = document.getElementById('cfg-target-hotkey');
+      if (btn) {
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.innerHTML = '🔴 Grabar Teclas';
+      }
+      if (input) {
+        input.placeholder = 'Ej. Ctrl+Shift+M, Alt+Tab, F13, Ctrl+C';
+      }
+    }
+
+    function testCurrentHotkey() {
+      var val = document.getElementById('cfg-target-hotkey').value.trim();
+      var st = document.getElementById('hotkey-test-status');
+      if (!val) {
+        if (st) {
+          st.style.display = 'block';
+          st.style.color = '#f85149';
+          st.innerHTML = '⚠️ Escribe o graba un atajo primero.';
+        }
+        return;
+      }
+      if (st) {
+        st.style.display = 'block';
+        st.style.color = '#58a6ff';
+        st.innerHTML = '⚡ Enviando atajo "' + escapeHtml(val) + '" a tu PC...';
+      }
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/action', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (st) {
+            st.style.color = '#3fb950';
+            st.innerHTML = '✅ ¡Atajo "' + escapeHtml(val) + '" ejecutado en tu PC!';
+            setTimeout(function() {
+              if (st) st.style.display = 'none';
+            }, 3500);
+          }
+        }
+      };
+      xhr.send(JSON.stringify({ type: 'hotkey', action: '', target: val }));
+    }
+
+    window.addEventListener('keydown', function(e) {
+      if (!isRecordingHotkey) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      var parts = [];
+      if (e.ctrlKey) parts.push('Ctrl');
+      if (e.altKey) parts.push('Alt');
+      if (e.shiftKey) parts.push('Shift');
+      if (e.metaKey) parts.push('Win');
+
+      var key = e.key;
+      var ignored = ['Control', 'Alt', 'Shift', 'Meta'];
+      if (ignored.indexOf(key) === -1) {
+        var kName = key.length === 1 ? key.toUpperCase() : key;
+        parts.push(kName);
+        var combo = parts.join('+');
+        var input = document.getElementById('cfg-target-hotkey');
+        if (input) input.value = combo;
+        stopRecordingHotkey();
+      } else if (parts.length > 0) {
+        var input = document.getElementById('cfg-target-hotkey');
+        if (input) input.value = parts.join('+');
+      }
+    }, true);
+
   </script>
 </body>
 </html>

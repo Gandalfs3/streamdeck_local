@@ -36,6 +36,9 @@ class Program {
     [DllImport("user32.dll")]
     static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
 
+    [DllImport("user32.dll")]
+    static extern uint MapVirtualKey(uint uCode, uint uMapType);
+
     [DllImport("user32.dll", SetLastError = true)]
     static extern IntPtr OpenWindowStationW([MarshalAs(UnmanagedType.LPWStr)] string lpszWinSta, bool fInherit, uint dwDesiredAccess);
 
@@ -48,17 +51,37 @@ class Program {
     [DllImport("user32.dll", SetLastError = true)]
     static extern bool SetThreadDesktop(IntPtr hDesktop);
 
+    static bool IsExtendedKey(byte vk) {
+        return vk == 0x5B || vk == 0x5C || // Win
+               vk == 0x26 || vk == 0x28 || vk == 0x25 || vk == 0x27 || // Arrows
+               vk == 0x24 || vk == 0x23 || vk == 0x21 || vk == 0x22 || // Home, End, PgUp, PgDn
+               vk == 0x2D || vk == 0x2E || // Ins, Del
+               vk == 0x2C || // PrintScreen
+               vk == 0xA3 || vk == 0xA5;   // RCtrl, RAlt
+    }
+
     static byte ParseKey(string k) {
         k = k.Trim().ToLower();
         if (k == "ctrl" || k == "control") return 0x11;
         if (k == "shift") return 0x10;
         if (k == "alt") return 0x12;
-        if (k == "win" || k == "windows") return 0x5B;
-        if (k == "enter" || k == "return") return 0x0D;
+        if (k == "win" || k == "windows" || k == "cmd" || k == "super") return 0x5B;
+        if (k == "enter" || k == "return" || k == "intro") return 0x0D;
         if (k == "esc" || k == "escape") return 0x1B;
         if (k == "space" || k == "espacio") return 0x20;
-        if (k == "tab") return 0x09;
-        if (k == "backspace") return 0x08;
+        if (k == "tab" || k == "tabulador") return 0x09;
+        if (k == "backspace" || k == "retroceso") return 0x08;
+        if (k == "del" || k == "delete" || k == "supr" || k == "suprimir") return 0x2E;
+        if (k == "ins" || k == "insert" || k == "insertar") return 0x2D;
+        if (k == "home" || k == "inicio") return 0x24;
+        if (k == "end" || k == "fin") return 0x23;
+        if (k == "pageup" || k == "pgup" || k == "repag") return 0x21;
+        if (k == "pagedown" || k == "pgdn" || k == "avpag") return 0x22;
+        if (k == "up" || k == "arriba") return 0x26;
+        if (k == "down" || k == "abajo") return 0x28;
+        if (k == "left" || k == "izquierda") return 0x25;
+        if (k == "right" || k == "derecha") return 0x27;
+        if (k == "prtscr" || k == "printscreen" || k == "imprpant") return 0x2C;
         if (k.StartsWith("f") && k.Length > 1) {
             int fNum;
             if (int.TryParse(k.Substring(1), out fNum) && fNum >= 1 && fNum <= 24) {
@@ -84,11 +107,19 @@ class Program {
         if (keys.Count == 0) return;
 
         for (int i = 0; i < keys.Count; i++) {
-            keybd_event(keys[i], 0, 0, 0);
+            byte vk = keys[i];
+            uint scan = MapVirtualKey(vk, 0);
+            uint flags = IsExtendedKey(vk) ? 1u : 0u;
+            keybd_event(vk, (byte)scan, flags, 0);
+            System.Threading.Thread.Sleep(10);
         }
-        System.Threading.Thread.Sleep(50);
+        System.Threading.Thread.Sleep(40);
         for (int i = keys.Count - 1; i >= 0; i--) {
-            keybd_event(keys[i], 0, 2, 0);
+            byte vk = keys[i];
+            uint scan = MapVirtualKey(vk, 0);
+            uint flags = 2u | (IsExtendedKey(vk) ? 1u : 0u);
+            keybd_event(vk, (byte)scan, flags, 0);
+            System.Threading.Thread.Sleep(10);
         }
         Console.WriteLine("Atajo enviado: " + combo);
     }
@@ -113,6 +144,7 @@ class Program {
             if (hdesk != IntPtr.Zero) SetThreadDesktop(hdesk);
         } catch { }
 
+        string fullArgs = string.Join(" ", args).Trim();
         string cmd = args[0].ToLower();
 
         try {
@@ -208,9 +240,16 @@ class Program {
                 keybd_event(0xB1, 0, 1, 0);
                 keybd_event(0xB1, 0, 3, 0);
             }
-            else if (cmd == "hotkey" && args.Length > 1) {
-                string combo = string.Join(" ", args, 1, args.Length - 1).Trim().ToLower();
-                SendHotkey(combo);
+            else if (cmd == "hotkey" || cmd.StartsWith("hotkey ") || fullArgs.StartsWith("hotkey", StringComparison.OrdinalIgnoreCase)) {
+                string combo = "";
+                if (cmd == "hotkey" && args.Length > 1) {
+                    combo = string.Join(" ", args, 1, args.Length - 1).Trim().ToLower();
+                } else if (fullArgs.Length > 6) {
+                    combo = fullArgs.Substring(6).Trim().ToLower();
+                }
+                if (!string.IsNullOrEmpty(combo)) {
+                    SendHotkey(combo);
+                }
             }
         } catch (Exception ex) {
             Console.WriteLine("Error: " + ex.Message);

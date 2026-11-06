@@ -108,13 +108,151 @@ def get_stats():
 
 CREATE_NO_WINDOW = 0x08000000
 
-def run_audio_tool(cmd):
+# --- Simulacion Nativa de Hotkeys y Macros en Windows (Sin dependencias externas) ---
+KEYEVENTF_EXTENDEDKEY = 0x0001
+KEYEVENTF_KEYUP = 0x0002
+KEYEVENTF_UNICODE = 0x0004
+
+VK_MAP = {
+    # Modificadores
+    "ctrl": (0x11, False), "control": (0x11, False), "lctrl": (0xA2, False), "rctrl": (0xA3, True),
+    "shift": (0x10, False), "lshift": (0xA0, False), "rshift": (0xA1, False),
+    "alt": (0x12, False), "menu": (0x12, False), "lalt": (0xA4, False), "ralt": (0xA5, True),
+    "win": (0x5B, True), "windows": (0x5B, True), "lwin": (0x5B, True), "rwin": (0x5C, True), "cmd": (0x5B, True), "super": (0x5B, True),
+
+    # Teclas comunes
+    "enter": (0x0D, False), "return": (0x0D, False), "intro": (0x0D, False),
+    "esc": (0x1B, False), "escape": (0x1B, False),
+    "space": (0x20, False), "espacio": (0x20, False),
+    "tab": (0x09, False), "tabulador": (0x09, False),
+    "backspace": (0x08, False), "retroceso": (0x08, False),
+
+    # Navegacion y edicion
+    "del": (0x2E, True), "delete": (0x2E, True), "supr": (0x2E, True), "suprimir": (0x2E, True),
+    "ins": (0x2D, True), "insert": (0x2D, True), "insertar": (0x2D, True),
+    "home": (0x24, True), "inicio": (0x24, True),
+    "end": (0x23, True), "fin": (0x23, True),
+    "pageup": (0x21, True), "pgup": (0x21, True), "repag": (0x21, True),
+    "pagedown": (0x22, True), "pgdn": (0x22, True), "avpag": (0x22, True),
+    "up": (0x26, True), "arriba": (0x26, True),
+    "down": (0x28, True), "abajo": (0x28, True),
+    "left": (0x25, True), "izquierda": (0x25, True),
+    "right": (0x27, True), "derecha": (0x27, True),
+
+    # Bloqueos y especiales
+    "capslock": (0x14, False), "bloqmayus": (0x14, False),
+    "numlock": (0x90, True), "bloqnum": (0x90, True),
+    "scrolllock": (0x91, False), "bloqdespl": (0x91, False),
+    "printscreen": (0x2C, True), "prtscr": (0x2C, True), "imprpant": (0x2C, True),
+    "pause": (0x13, False), "pausa": (0x13, False),
+
+    # Multimedia
+    "mute": (0xAD, True), "vol_mute": (0xAD, True),
+    "vol_down": (0xAE, True), "voldown": (0xAE, True),
+    "vol_up": (0xAF, True), "volup": (0xAF, True),
+    "play_pause": (0xB3, True), "playpause": (0xB3, True),
+    "next_track": (0xB0, True), "next": (0xB0, True),
+    "prev_track": (0xB1, True), "prev": (0xB1, True),
+    "media_stop": (0xB2, True), "stop": (0xB2, True),
+}
+
+for _i in range(1, 25):
+    VK_MAP[f"f{_i}"] = (0x6F + _i, False)
+
+for _i in range(10):
+    VK_MAP[f"num{_i}"] = (0x60 + _i, False)
+    VK_MAP[f"numpad{_i}"] = (0x60 + _i, False)
+VK_MAP["num_add"] = (0x6B, False)
+VK_MAP["num_subtract"] = (0x6D, False)
+VK_MAP["num_multiply"] = (0x6A, False)
+VK_MAP["num_divide"] = (0x6F, True)
+VK_MAP["num_decimal"] = (0x6E, False)
+
+def parse_single_hotkey(combo_str):
+    parts = [p.strip().lower() for p in re.split(r'[\+\-\s]+', combo_str) if p.strip()]
+    keys = []
+    for p in parts:
+        if p in VK_MAP:
+            keys.append(VK_MAP[p])
+        elif len(p) == 1:
+            c = p.upper()
+            if ('A' <= c <= 'Z') or ('0' <= c <= '9'):
+                keys.append((ord(c), False))
+    return keys
+
+def send_hotkey(target):
+    if not target:
+        return False
+    target = target.strip()
+    try:
+        user32 = ctypes.windll.user32
+
+        # Modo texto directo: text:... o type:...
+        if target.lower().startswith(('text:', 'type:')):
+            text = target.split(':', 1)[1]
+            for ch in text:
+                user32.keybd_event(0, ord(ch), KEYEVENTF_UNICODE, 0)
+                user32.keybd_event(0, ord(ch), KEYEVENTF_UNICODE | KEYEVENTF_KEYUP, 0)
+                time.sleep(0.01)
+            print(f"[HOTKEY] Escrito texto unicode: {text}", flush=True)
+            return True
+
+        # Soporte de pasos múltiples separados por coma o punto y coma
+        # Ejemplo: "ctrl+c, tab, ctrl+v" o "alt+tab"
+        steps = [s.strip() for s in re.split(r'[,;]+', target) if s.strip()]
+        for step in steps:
+            if step.lower().startswith(('wait:', 'delay:', 'sleep:')):
+                try:
+                    ms = int(re.findall(r'\d+', step)[0])
+                    time.sleep(ms / 1000.0)
+                except Exception:
+                    time.sleep(0.1)
+                continue
+
+            keys = parse_single_hotkey(step)
+            if not keys:
+                continue
+
+            # Presionar teclas hacia abajo con scan code de hardware
+            for vk, is_ext in keys:
+                scan = user32.MapVirtualKeyW(vk, 0)
+                flags = KEYEVENTF_EXTENDEDKEY if is_ext else 0
+                user32.keybd_event(vk, scan, flags, 0)
+                time.sleep(0.01)
+
+            time.sleep(0.04)
+
+            # Soltar teclas en orden inverso
+            for vk, is_ext in reversed(keys):
+                scan = user32.MapVirtualKeyW(vk, 0)
+                flags = KEYEVENTF_KEYUP | (KEYEVENTF_EXTENDEDKEY if is_ext else 0)
+                user32.keybd_event(vk, scan, flags, 0)
+                time.sleep(0.01)
+
+            time.sleep(0.04)
+
+        print(f"[HOTKEY] Atajo simulado con exito: {target}", flush=True)
+        return True
+    except Exception as e:
+        print(f"[HOTKEY] Error nativo simulando atajo {target}: {e}", flush=True)
+        run_audio_tool("hotkey", target)
+        return False
+
+def run_audio_tool(*args):
     if os.path.exists(AUDIO_TOOL_PATH):
         try:
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
             startupinfo.wShowWindow = 0
-            subprocess.Popen([AUDIO_TOOL_PATH, cmd], startupinfo=startupinfo, creationflags=CREATE_NO_WINDOW)
+            cmd_list = [AUDIO_TOOL_PATH]
+            for a in args:
+                if isinstance(a, str):
+                    cmd_list.append(a)
+                elif isinstance(a, (list, tuple)):
+                    cmd_list.extend(a)
+                else:
+                    cmd_list.append(str(a))
+            subprocess.Popen(cmd_list, startupinfo=startupinfo, creationflags=CREATE_NO_WINDOW)
         except Exception:
             pass
 
@@ -345,8 +483,7 @@ def handle_action_request(data):
 
     elif action_type == "hotkey":
         if target:
-            run_audio_tool(f"hotkey {target}")
-            return True
+            return send_hotkey(target)
 
     elif action_type == "system":
         execute_action(action)

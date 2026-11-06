@@ -45,6 +45,16 @@
     "icon": "vol_down"
   },
   {
+    "id": "btn_1793997626241",
+    "title": "Bloc de Notas",
+    "theme": "theme-cyan",
+    "type": "app",
+    "action": "",
+    "target": "notepad",
+    "icon": "📝",
+    "folder": "root"
+  },
+  {
     "id": "btn_6",
     "title": "Volumen +",
     "theme": "theme-sys",
@@ -52,15 +62,6 @@
     "action": "vol_up",
     "target": "",
     "icon": "vol_up"
-  },
-  {
-    "id": "btn_7",
-    "title": "Escritorio",
-    "theme": "theme-sys",
-    "type": "system",
-    "action": "desktop",
-    "target": "",
-    "icon": "desktop"
   },
   {
     "id": "btn_8",
@@ -72,6 +73,15 @@
     "icon": "lock"
   },
   {
+    "id": "btn_10",
+    "title": "Terminal",
+    "theme": "theme-dev",
+    "type": "app",
+    "action": "",
+    "target": "powershell",
+    "icon": "terminal"
+  },
+  {
     "id": "btn_9",
     "title": "VS Code",
     "theme": "theme-dev",
@@ -81,13 +91,23 @@
     "icon": "code"
   },
   {
-    "id": "btn_10",
-    "title": "Terminal",
-    "theme": "theme-dev",
+    "id": "btn_12",
+    "title": "Calculadora",
+    "theme": "theme-util",
     "type": "app",
     "action": "",
-    "target": "powershell",
-    "icon": "terminal"
+    "target": "calc",
+    "icon": "calc"
+  },
+  {
+    "id": "btn_1793998620248",
+    "title": "Botón",
+    "theme": "theme-cyan",
+    "type": "hotkey",
+    "action": "",
+    "target": "alt+tab",
+    "icon": "⌨️",
+    "folder": "root"
   },
   {
     "id": "btn_11",
@@ -99,12 +119,33 @@
     "icon": "sound"
   },
   {
-    "id": "btn_12",
-    "title": "Calculadora",
-    "theme": "theme-util",
+    "id": "btn_1793997301726",
+    "title": "Cliq",
+    "theme": "theme-cyan",
     "type": "app",
     "action": "",
-    "target": "calc",
-    "icon": "calc"
+    "target": "C:\\Users\\TIRESIA\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\ZOHO Corporation Private Limited\\Cliq.lnk",
+    "icon": "🚀",
+    "folder": "root"
+  },
+  {
+    "id": "btn_7",
+    "title": "Escritorio",
+    "theme": "theme-sys",
+    "type": "system",
+    "action": "desktop",
+    "target": "",
+    "icon": "desktop",
+    "folder": "root"
+  },
+  {
+    "id": "btn_1794001012533",
+    "title": "bud",
+    "theme": "theme-cyan",
+    "type": "hotkey",
+    "action": "",
+    "target": "alt + f",
+    "icon": "⌨️",
+    "folder": "root"
   }
 ]
