@@ -135,12 +135,12 @@
     "icon": "📺"
   },
   {
-    "id": "btn_1793972916434",
-    "title": "edge",
+    "id": "btn_1793977584359",
+    "title": "brave",
     "theme": "theme-danger",
     "type": "app",
     "action": "",
-    "target": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Microsoft Edge.lnk",
-    "icon": "💬"
+    "target": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Brave.lnk",
+    "icon": "📺"
   }
 ]

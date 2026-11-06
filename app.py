@@ -263,15 +263,30 @@ def launch_app(target):
         if os.path.exists(code_path):
             target = code_path
 
-    # Metodo 1: audio_tool.exe nativo (.NET Process.Start con UseShellExecute)
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    startupinfo.wShowWindow = 0
+    try:
+        startupinfo.lpDesktop = r"WinSta0\Default"
+    except Exception:
+        pass
+
+    # Metodo 1: audio_tool.exe nativo (.NET Process.Start con resolucion de .lnk y sesion interactiva)
     if os.path.exists(AUDIO_TOOL_PATH):
         try:
-            p = subprocess.Popen([AUDIO_TOOL_PATH, "launch", target])
+            subprocess.Popen([AUDIO_TOOL_PATH, "launch", target], startupinfo=startupinfo)
             return True
         except Exception:
             pass
 
-    # Metodo 2: ShellExecuteW
+    # Metodo 2: os.startfile nativo
+    try:
+        os.startfile(target)
+        return True
+    except Exception:
+        pass
+
+    # Metodo 3: ShellExecuteW
     try:
         ret = ctypes.windll.shell32.ShellExecuteW(0, "open", target, None, None, 1)
         if ret > 32:
@@ -279,16 +294,9 @@ def launch_app(target):
     except Exception:
         pass
 
-    # Metodo 3: os.startfile nativo
-    try:
-        os.startfile(target)
-        return True
-    except Exception:
-        pass
-
     # Metodo 4: cmd start
     try:
-        subprocess.Popen(f'cmd.exe /c start "" "{target}"', shell=True)
+        subprocess.Popen(f'cmd.exe /c start "" "{target}"', shell=True, startupinfo=startupinfo)
         return True
     except Exception:
         pass

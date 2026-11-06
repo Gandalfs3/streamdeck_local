@@ -36,6 +36,18 @@ class Program {
     [DllImport("user32.dll")]
     static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
 
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern IntPtr OpenWindowStationW([MarshalAs(UnmanagedType.LPWStr)] string lpszWinSta, bool fInherit, uint dwDesiredAccess);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern bool SetProcessWindowStation(IntPtr hWinSta);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern IntPtr OpenDesktopW([MarshalAs(UnmanagedType.LPWStr)] string lpszDesktop, uint dwFlags, bool fInherit, uint dwDesiredAccess);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern bool SetThreadDesktop(IntPtr hDesktop);
+
     static IAudioEndpointVolume GetVolume() {
         var enumerator = new MMDeviceEnumeratorComObject() as IMMDeviceEnumerator;
         IMMDevice dev;
@@ -48,6 +60,14 @@ class Program {
 
     static void Main(string[] args) {
         if (args.Length == 0) return;
+
+        try {
+            IntPtr hwinsta = OpenWindowStationW("WinSta0", false, 0x10000000);
+            if (hwinsta != IntPtr.Zero) SetProcessWindowStation(hwinsta);
+            IntPtr hdesk = OpenDesktopW("Default", 0, false, 0x10000000);
+            if (hdesk != IntPtr.Zero) SetThreadDesktop(hdesk);
+        } catch { }
+
         string cmd = args[0].ToLower();
 
         try {
@@ -79,7 +99,39 @@ class Program {
                 Console.WriteLine("Escritorio conmutado con exito");
             }
             else if (cmd == "launch" && args.Length > 1) {
-                string target = args[1];
+                string target = string.Join(" ", args, 1, args.Length - 1).Trim();
+                if (target.StartsWith("\"") && target.EndsWith("\"") && target.Length >= 2) {
+                    target = target.Substring(1, target.Length - 2).Trim();
+                }
+
+                // Si es un acceso directo (.lnk), resolver destino real via WScript.Shell
+                if (target.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase) && System.IO.File.Exists(target)) {
+                    try {
+                        Type wscriptType = Type.GetTypeFromProgID("WScript.Shell");
+                        if (wscriptType != null) {
+                            dynamic wscript = Activator.CreateInstance(wscriptType);
+                            dynamic shortcut = wscript.CreateShortcut(target);
+                            string resolvedPath = (string)shortcut.TargetPath;
+                            string resolvedArgs = (string)shortcut.Arguments;
+                            string resolvedDir = (string)shortcut.WorkingDirectory;
+                            if (!string.IsNullOrEmpty(resolvedPath)) {
+                                System.Diagnostics.ProcessStartInfo psiLnk = new System.Diagnostics.ProcessStartInfo();
+                                psiLnk.FileName = resolvedPath;
+                                if (!string.IsNullOrEmpty(resolvedArgs)) psiLnk.Arguments = resolvedArgs;
+                                if (!string.IsNullOrEmpty(resolvedDir) && System.IO.Directory.Exists(resolvedDir)) {
+                                    psiLnk.WorkingDirectory = resolvedDir;
+                                }
+                                psiLnk.UseShellExecute = true;
+                                System.Diagnostics.Process.Start(psiLnk);
+                                Console.WriteLine("Lanzado acceso directo resuelto: " + resolvedPath);
+                                return;
+                            }
+                        }
+                    } catch (Exception exLnk) {
+                        Console.WriteLine("Aviso resolviendo lnk: " + exLnk.Message);
+                    }
+                }
+
                 try {
                     System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo();
                     psi.FileName = target;
