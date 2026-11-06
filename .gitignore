@@ -11,3 +11,6 @@ sounds/*
 !sounds/campanas.wav
 !sounds/ding.wav
 !sounds/tada.wav
+*.log
+icons/*
+!icons/.gitkeep

@@ -261,66 +261,140 @@
       box-shadow: 0 0 10px rgba(240, 136, 62, 0.4);
     }
 
-    /* MEDIA QUERIES RESPONSIVAS */
+    /* MEDIA QUERIES RESPONSIVAS Y MENU MOVIL */
+    .btn-menu-trigger {
+      display: none;
+      padding: 6px 12px;
+      font-size: 16px;
+    }
+    .more-menu-dropdown {
+      position: absolute;
+      top: 52px;
+      right: 12px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.85);
+      z-index: 95;
+      min-width: 220px;
+      padding: 6px 0;
+      animation: menu-slide 0.15s ease;
+    }
+    @keyframes menu-slide {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      color: #c9d1d9;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+    .menu-item:hover, .menu-item:active {
+      background: #21262d;
+      color: #58a6ff;
+    }
+    .menu-divider {
+      height: 1px;
+      background: #30363d;
+      margin: 6px 0;
+    }
+    .menu-telemetry {
+      padding: 8px 16px;
+    }
+    .menu-author {
+      display: block;
+      padding: 8px 16px;
+      color: #8b949e;
+      font-size: 11px;
+      text-decoration: none;
+      text-align: center;
+    }
+    .menu-author:hover { color: #f85149; }
+
+    /* BOTON VOLVER DENTRO DE CARPETA (STREAM DECK STYLE) */
+    .btn-deck-back {
+      border-color: #58a6ff !important;
+      background: -webkit-linear-gradient(top, #15345d 0%, #0d1e36 100%) !important;
+      background: linear-gradient(180deg, #15345d 0%, #0d1e36 100%) !important;
+      box-shadow: 0 0 14px rgba(88, 166, 255, 0.3) !important;
+    }
+    .btn-deck-back:hover {
+      box-shadow: 0 0 20px rgba(88, 166, 255, 0.6) !important;
+    }
+    .back-indicator-badge {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: rgba(88, 166, 255, 0.2);
+      border: 1px solid rgba(88, 166, 255, 0.4);
+      color: #58a6ff;
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    /* DRAG & DROP UNIFICADO (PC Y MOVIL) */
+    .deck-btn.is-being-dragged {
+      opacity: 0.25 !important;
+      transform: scale(0.9) !important;
+    }
+    .deck-btn.drag-over {
+      border-color: #58a6ff !important;
+      background: #1f345d !important;
+      box-shadow: 0 0 24px rgba(88, 166, 255, 0.9) !important;
+      transform: scale(1.05) !important;
+    }
+    .deck-btn {
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
     @media (max-width: 850px) {
       .telemetry-group { display: none; }
     }
 
-    @media (max-width: 650px) {
+    @media (max-width: 700px) {
+      .telemetry-group { display: none !important; }
+      .btn-desktop-only { display: none !important; }
+      .btn-menu-trigger { display: flex !important; }
       .action-btn-text { display: none; }
-      .btn-action-top {
-        padding: 6px 10px;
-        font-size: 13px;
-      }
       .brand-badge { display: none; }
-      .author-prefix { display: none; }
+      .author-badge { display: none; }
+      .type-cards-grid { grid-template-columns: 1fr !important; }
     }
 
     @media (max-width: 440px) {
-      .brand-title { font-size: 12px; }
-      .author-heart { display: none; }
-      .author-badge { font-size: 10px; padding: 2px 5px; }
-      .btn-action-top { padding: 5px 8px; }
+      .brand-title { font-size: 13px; }
+      .btn-action-top { padding: 6px 8px; }
     }
 
-    /* BARRA DE NAVEGACION DE CARPETAS */
-    .folder-nav-bar {
-      display: flex;
+    /* BARRA DE NAVEGACION DE CARPETAS / BREADCRUMB */
+    .folder-breadcrumb-tag {
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
-      padding: 6px 10px;
+      gap: 6px;
       background: #161b22;
       border: 1px solid #30363d;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      flex-shrink: 0;
-    }
-    .btn-folder-back {
-      background: #21262d;
-      border: 1px solid #30363d;
-      color: #58a6ff;
-      padding: 5px 12px;
       border-radius: 6px;
+      padding: 4px 10px;
+      margin-bottom: 8px;
       font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.15s ease;
-    }
-    .btn-folder-back:hover {
-      background: #30363d;
-      border-color: #58a6ff;
-      color: #ffffff;
-    }
-    .folder-breadcrumb {
-      font-size: 13px;
       color: #c9d1d9;
       font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      align-self: flex-start;
+      cursor: pointer;
+    }
+    .folder-breadcrumb-tag:hover {
+      border-color: #58a6ff;
+      color: #58a6ff;
     }
 
     /* BARRA DE PAGINACION */
@@ -650,7 +724,7 @@
       .deck-btn .btn-text { font-size: 11px; }
     }
 
-    /* MODAL DE EDICIÓN */
+    /* MODAL DE EDICIÓN / WIZARD */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -658,24 +732,28 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.8);
       z-index: 100;
       justify-content: center;
       align-items: center;
-      padding: 14px;
+      padding: 12px;
+      backdrop-filter: blur(4px);
     }
     .modal-card {
       background: #161b22;
       border: 1px solid #30363d;
       border-radius: 14px;
       width: 100%;
-      max-width: 480px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
+      max-width: 500px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85);
       overflow: hidden;
-      animation: modal-pop 0.2s ease;
+      animation: modal-pop 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
     }
     @keyframes modal-pop {
-      0% { transform: scale(0.9); opacity: 0; }
+      0% { transform: scale(0.95); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
     .modal-header {
@@ -687,9 +765,13 @@
       border-bottom: 1px solid #30363d;
     }
     .modal-header h3 {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       color: #58a6ff;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .modal-close {
       background: transparent;
@@ -697,13 +779,151 @@
       color: #8b949e;
       font-size: 18px;
       cursor: pointer;
+      padding: 2px 6px;
     }
     .modal-close:hover { color: #f85149; }
+
+    /* STEPPER */
+    .wizard-stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      background: #0d1117;
+      padding: 8px 12px;
+      border-bottom: 1px solid #30363d;
+      user-select: none;
+    }
+    .wizard-step-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      color: #8b949e;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+    .wizard-step-tab:hover { color: #c9d1d9; }
+    .wizard-step-tab.active {
+      color: #58a6ff;
+      background: rgba(88, 166, 255, 0.12);
+    }
+    .step-num {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #21262d;
+      color: #8b949e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .wizard-step-tab.active .step-num {
+      background: #1f6feb;
+      color: #ffffff;
+      box-shadow: 0 0 8px rgba(88, 166, 255, 0.6);
+    }
+    .wizard-step-divider {
+      color: #30363d;
+      font-size: 13px;
+    }
+    .wizard-step-badge {
+      font-size: 10px;
+      color: #58a6ff;
+      background: rgba(88, 166, 255, 0.12);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
     .modal-body {
       padding: 16px;
-      max-height: 75vh;
       overflow-y: auto;
+      flex: 1;
     }
+    .wizard-section-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #f0f6fc;
+      margin-bottom: 10px;
+    }
+
+    /* TARJETAS PASO 1 */
+    .type-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .type-card {
+      background: #0d1117;
+      border: 1.5px solid #30363d;
+      border-radius: 10px;
+      padding: 12px 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .type-card:hover {
+      border-color: #58a6ff;
+      background: #161b22;
+      transform: translateY(-2px);
+    }
+    .type-card.selected {
+      border-color: #58a6ff;
+      background: rgba(88, 166, 255, 0.12);
+      box-shadow: 0 0 14px rgba(88, 166, 255, 0.3);
+    }
+    .type-card-icon {
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+    .type-card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f0f6fc;
+      margin-bottom: 2px;
+    }
+    .type-card-desc {
+      font-size: 10px;
+      color: #8b949e;
+      line-height: 1.25;
+    }
+
+    /* VISTA PREVIA EN VIVO PASO 3 */
+    .preview-container {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .preview-card-wrap {
+      width: 105px;
+      height: 90px;
+      margin: 4px auto;
+    }
+    #live-preview-btn {
+      width: 100%;
+      height: 100%;
+      cursor: default;
+      pointer-events: none;
+    }
+
     .form-group {
       margin-bottom: 12px;
     }
@@ -756,7 +976,7 @@
       background: #21262d;
       border: 1px solid #30363d;
       color: #f0f6fc;
-      font-size: 16px;
+      font-size: 15px;
       padding: 4px 8px;
       border-radius: 6px;
       cursor: pointer;
@@ -770,7 +990,12 @@
       padding: 12px 16px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
       border-top: 1px solid #30363d;
+    }
+    .wizard-nav-btns {
+      display: flex;
+      gap: 8px;
     }
     .btn-modal {
       padding: 8px 14px;
@@ -779,13 +1004,16 @@
       font-weight: 700;
       cursor: pointer;
       border: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
     .btn-save { background: #238636; color: #ffffff; }
     .btn-save:hover { background: #2ea043; }
     .btn-delete { background: #da3633; color: #ffffff; }
     .btn-delete:hover { background: #f85149; }
-    .btn-cancel { background: #21262d; color: #c9d1d9; }
-    .btn-cancel:hover { background: #30363d; }
+    .btn-cancel { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; }
+    .btn-cancel:hover { background: #30363d; color: #ffffff; }
   </style>
 </head>
 <body>
@@ -819,34 +1047,72 @@
       </div>
 
       <div class="header-actions">
-        <button class="btn-action-top btn-stop-audio" id="btn-stop-audio" onclick="stopAllSounds()" title="Detener reproducción de efectos de sonido">
+        <!-- 1. Botón Pánico (Visible siempre) -->
+        <button class="btn-action-top btn-stop-audio" id="btn-stop-audio" onclick="stopAllSounds()" title="Detener reproducción de audio">
           <span>⏹️</span>
           <span class="action-btn-text">Parar Audio</span>
         </button>
-        <button class="btn-action-top" id="btn-edit" onclick="toggleEditMode()" title="Personalizar botones">
-          <span id="edit-icon">⚙️</span>
-          <span class="action-btn-text" id="edit-label">Personalizar</span>
-        </button>
-        <button class="btn-action-top" id="btn-sound" onclick="toggleSound()" title="Activar/Silenciar Sonido de pulsación">
-          <span id="sound-icon">🔊</span>
-          <span class="action-btn-text" id="sound-label">Sonido</span>
-        </button>
+
+        <!-- 2. Botón Pantalla Completa (Visible siempre) -->
         <button class="btn-action-top" onclick="toggleFullScreen()" title="Modo Pantalla Completa">
           <span>⛶</span> 
           <span class="action-btn-text">Pantalla</span>
         </button>
+
+        <!-- Botones directos visibles en PC / Desktop -->
+        <button class="btn-action-top btn-desktop-only" id="btn-edit" onclick="toggleEditMode()" title="Personalizar botones">
+          <span id="edit-icon">⚙️</span>
+          <span class="action-btn-text" id="edit-label">Personalizar</span>
+        </button>
+        <button class="btn-action-top btn-desktop-only" id="btn-sound" onclick="toggleSound()" title="Activar/Silenciar Sonido">
+          <span id="sound-icon">🔊</span>
+          <span class="action-btn-text" id="sound-label">Sonido</span>
+        </button>
+
+        <!-- 3. Botón 3 Puntos Menú para Móvil -->
+        <button class="btn-action-top btn-menu-trigger" id="btn-more-menu" onclick="toggleMoreMenu(event)" title="Más opciones">
+          <span>⋮</span>
+        </button>
       </div>
+    </div>
+
+    <!-- MENU FLOTANTE PARA MOVIL (3 PUNTOS) -->
+    <div class="more-menu-dropdown" id="more-menu-dropdown" style="display:none;">
+      <div class="menu-item" onclick="toggleEditMode(); toggleMoreMenu();">
+        <span id="menu-edit-icon">⚙️</span>
+        <span id="menu-edit-label">Personalizar Botones</span>
+      </div>
+      <div class="menu-item" onclick="toggleSound(); updateMenuSoundLabel();">
+        <span id="menu-sound-icon">🔊</span>
+        <span id="menu-sound-label">Sonido Táctil: Activado</span>
+      </div>
+      <div class="menu-divider"></div>
+      <div class="menu-telemetry">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="color:#8b949e; font-size:11px;">CPU</span>
+          <span style="color:#58a6ff; font-weight:bold; font-size:11px;" id="menu-cpu-val">0%</span>
+        </div>
+        <div class="progress-track" style="width:100%; height:4px; margin-bottom:8px;">
+          <div class="progress-bar" id="menu-cpu-bar"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="color:#8b949e; font-size:11px;">RAM</span>
+          <span style="color:#58a6ff; font-weight:bold; font-size:11px;" id="menu-ram-val">0%</span>
+        </div>
+        <div class="progress-track" style="width:100%; height:4px;">
+          <div class="progress-bar" id="menu-ram-bar"></div>
+        </div>
+      </div>
+      <div class="menu-divider"></div>
+      <a href="https://github.com/Gandalfs3" target="_blank" class="menu-author" onclick="toggleMoreMenu();">
+        ❤️ Creado por <strong>@Gandalfs3</strong>
+      </a>
     </div>
 
     <!-- GRILLA STREAM DECK DINAMICA CON CARPETAS Y PAGINACION -->
     <div class="deck-viewport" id="deck-viewport">
-      <div class="folder-nav-bar" id="folder-nav-bar" style="display:none;">
-        <button class="btn-folder-back" onclick="navigateBackFolder()">
-          <span>⬅️</span> <span>Volver</span>
-        </button>
-        <div class="folder-breadcrumb" id="folder-breadcrumb">
-          <span>🏠 Inicio</span> <span style="color:#58a6ff;">›</span> <span id="current-folder-title">Carpeta</span>
-        </div>
+      <div class="folder-breadcrumb-tag" id="folder-breadcrumb-tag" style="display:none;" onclick="navigateBackFolder()" title="Volver a Inicio">
+        <span>🏠 Inicio</span> <span style="color:#58a6ff;">›</span> <span id="current-folder-title" style="color:#58a6ff;">Carpeta</span> <span style="font-size:10px; color:#8b949e; margin-left:4px;">(toca o pulsa ⬅️ para volver)</span>
       </div>
 
       <div class="deck-grid" id="deck-grid">
@@ -862,176 +1128,249 @@
 
   </div>
 
-  <!-- MODAL DE CONFIGURACION DE BOTON -->
+  <!-- MODAL DE CONFIGURACION DE BOTON (WIZARD 3 PASOS) -->
   <div class="modal-backdrop" id="edit-modal">
-    <div class="modal-card">
+    <div class="modal-card wizard-modal">
       <div class="modal-header">
-        <h3 id="modal-heading">🛠️ Configurar Botón</h3>
+        <h3 id="modal-heading">
+          <span>🛠️ Configurar Botón</span>
+          <span class="wizard-step-badge" id="wizard-step-badge">Paso 1 de 3</span>
+        </h3>
         <button class="modal-close" onclick="closeEditModal()">✕</button>
       </div>
+
+      <!-- Barra de Pasos (Stepper) -->
+      <div class="wizard-stepper">
+        <div class="wizard-step-tab active" id="tab-step-1" onclick="goToWizardStep(1)">
+          <span class="step-num">1</span>
+          <span>Tipo</span>
+        </div>
+        <div class="wizard-step-divider">›</div>
+        <div class="wizard-step-tab" id="tab-step-2" onclick="goToWizardStep(2)">
+          <span class="step-num">2</span>
+          <span>Acción</span>
+        </div>
+        <div class="wizard-step-divider">›</div>
+        <div class="wizard-step-tab" id="tab-step-3" onclick="goToWizardStep(3)">
+          <span class="step-num">3</span>
+          <span>Estilo & Vista</span>
+        </div>
+      </div>
+
       <div class="modal-body">
         
-        <div class="form-group">
-          <label>Nombre / Etiqueta del botón:</label>
-          <input type="text" id="cfg-title" class="form-control" placeholder="Ej. Spotify, YouTube, Meme...">
-        </div>
-
-        <div class="form-group">
-          <label>Tipo de Acción:</label>
-          <select id="cfg-type" class="form-control" onchange="onTypeChanged()">
-            <option value="url">🌐 Abrir Enlace Web (URL)</option>
-            <option value="app">🚀 Abrir Programa o App (.exe)</option>
-            <option value="sound">🔊 Efecto de Sonido (Soundboard)</option>
-            <option value="hotkey">⌨️ Atajo de Teclado (Hotkey / Macro)</option>
-            <option value="folder">📁 Carpeta / Sub-panel (Folder)</option>
-            <option value="system">🎛️ Acción de Sistema / Hardware</option>
-          </select>
-        </div>
-
-        <div class="form-group" id="group-parent-folder">
-          <label>Ubicación / Carpeta:</label>
-          <select id="cfg-folder-select" class="form-control">
-            <option value="root">🏠 Pantalla Principal (Inicio)</option>
-          </select>
-        </div>
-
-        <div class="form-group" id="group-reorder" style="display:none;">
-          <label>Reordenar Posición:</label>
-          <div style="display:flex; gap:8px; align-items:center;">
-            <button type="button" class="btn-action-top" style="flex:1; justify-content:center;" onclick="moveCurrentButton(-1)">◀️ Mover Atrás</button>
-            <span id="reorder-info" style="font-size:12px; color:#8b949e; font-weight:bold; min-width:65px; text-align:center;">1 de 12</span>
-            <button type="button" class="btn-action-top" style="flex:1; justify-content:center;" onclick="moveCurrentButton(1)">▶️ Mover Adelante</button>
+        <!-- PASO 1: TIPO DE BOTON -->
+        <div class="wizard-page" id="wizard-page-1">
+          <label class="wizard-section-label">¿Qué quieres que haga este botón?</label>
+          <div class="type-cards-grid">
+            <div class="type-card selected" data-type="url" onclick="selectTypeCard('url')">
+              <div class="type-card-icon">🌐</div>
+              <div class="type-card-title">Enlace Web (URL)</div>
+              <div class="type-card-desc">Abrir YouTube, Twitch, ChatGPT o cualquier web</div>
+            </div>
+            <div class="type-card" data-type="app" onclick="selectTypeCard('app')">
+              <div class="type-card-icon">🚀</div>
+              <div class="type-card-title">Programa / App</div>
+              <div class="type-card-desc">Lanzar juegos o programas de tu PC (Discord, etc.)</div>
+            </div>
+            <div class="type-card" data-type="sound" onclick="selectTypeCard('sound')">
+              <div class="type-card-icon">🔊</div>
+              <div class="type-card-title">Soundboard</div>
+              <div class="type-card-desc">Efectos de sonido, risas y memes en directo</div>
+            </div>
+            <div class="type-card" data-type="hotkey" onclick="selectTypeCard('hotkey')">
+              <div class="type-card-icon">⌨️</div>
+              <div class="type-card-title">Atajo / Macro</div>
+              <div class="type-card-desc">Mutear mic en Discord/OBS, Alt+Tab, teclas F13-F24</div>
+            </div>
+            <div class="type-card" data-type="folder" onclick="selectTypeCard('folder')">
+              <div class="type-card-icon">📁</div>
+              <div class="type-card-title">Carpeta / Sub-panel</div>
+              <div class="type-card-desc">Crea un sub-panel para organizar más botones</div>
+            </div>
+            <div class="type-card" data-type="system" onclick="selectTypeCard('system')">
+              <div class="type-card-icon">🎛️</div>
+              <div class="type-card-title">Control de Sistema</div>
+              <div class="type-card-desc">Volumen, mutear, bloquear PC, multimedia</div>
+            </div>
           </div>
+          <!-- Input oculto para sincronizar valor de tipo -->
+          <input type="hidden" id="cfg-type" value="url">
         </div>
 
-        <!-- CAMPO URL -->
-        <div class="form-group" id="group-url">
-          <label>Enlace Web (URL):</label>
-          <input type="text" id="cfg-target-url" class="form-control" placeholder="https://youtube.com o https://chatgpt.com">
-        </div>
+        <!-- PASO 2: ACCION ESPECIFICA -->
+        <div class="wizard-page" id="wizard-page-2" style="display:none;">
+          <label class="wizard-section-label" id="step-2-section-label">Configura la acción:</label>
+          
+          <!-- CAMPO URL -->
+          <div class="form-group" id="group-url">
+            <label>Enlace Web (URL):</label>
+            <input type="text" id="cfg-target-url" class="form-control" placeholder="https://youtube.com o https://twitch.tv">
+            <div class="emoji-row" style="margin-top:6px;">
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-url').value='https://youtube.com'" style="font-size:11px;">YouTube</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-url').value='https://twitch.tv'" style="font-size:11px;">Twitch</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-url').value='https://discord.com/app'" style="font-size:11px;">Discord</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-url').value='https://chatgpt.com'" style="font-size:11px;">ChatGPT</button>
+            </div>
+          </div>
 
-        <!-- CAMPO APP -->
-        <div class="form-group" id="group-app" style="display:none;">
-          <label>Seleccionar Aplicación o Programa:</label>
-          <div style="display:flex; gap:6px; margin-bottom:8px;">
-            <select id="cfg-app-select" class="form-control" onchange="onAppSelectChanged()" style="flex:1;">
-              <option value="">Cargando programas de tu PC...</option>
+          <!-- CAMPO APP -->
+          <div class="form-group" id="group-app" style="display:none;">
+            <label>Seleccionar Programa de tu PC:</label>
+            <div style="display:flex; gap:6px; margin-bottom:8px;">
+              <select id="cfg-app-select" class="form-control" onchange="onAppSelectChanged()" style="flex:1;">
+                <option value="">Cargando programas de tu PC...</option>
+              </select>
+              <button class="btn-action-top" type="button" onclick="testSelectedApp()" title="Probar abrir aplicación en el PC">🚀 Probar</button>
+            </div>
+
+            <label style="font-size:11px; color:#8b949e; margin-bottom:3px;">Ruta o comando ejecutable:</label>
+            <input type="text" id="cfg-target-app" class="form-control" placeholder="calc, notepad, discord, o ruta C:\...exe">
+          </div>
+
+          <!-- CAMPO SOUNDBOARD -->
+          <div class="form-group" id="group-sound" style="display:none;">
+            <label>Archivo de Sonido:</label>
+            <div style="display:flex; gap:6px; margin-bottom:8px;">
+              <select id="cfg-target-sound" class="form-control" onchange="onSoundSelectChanged()" style="flex:1;">
+                <option value="">Seleccionar sonido...</option>
+                <option value="__upload__">➕ 📁 Seleccionar de mi PC...</option>
+              </select>
+              <button class="btn-action-top" type="button" onclick="testSelectedSound()" title="Probar sonido en PC">▶️ Probar</button>
+            </div>
+
+            <input type="file" id="sound-file-input" accept=".mp3,.wav,.ogg,.wma,.m4a,audio/*" style="display:none;" onchange="handleSoundFileUpload(this)">
+            <button type="button" class="btn-action-top" style="width:100%; justify-content:center; gap:8px; padding:8px 12px; background:#21262d; border:1px dashed #58a6ff; color:#58a6ff; font-weight:600; border-radius:8px;" onclick="document.getElementById('sound-file-input').click()">
+              📂 Elegir sonido de mi PC (.mp3, .wav) y copiar
+            </button>
+            <div id="sound-upload-status" style="font-size:11px; margin-top:6px; display:none; padding:6px 10px; border-radius:6px; background:#0d1117; border:1px solid #30363d;"></div>
+          </div>
+
+          <!-- CAMPO HOTKEY -->
+          <div class="form-group" id="group-hotkey" style="display:none;">
+            <label>Combinación de Teclas (Hotkey / Macro):</label>
+            <input type="text" id="cfg-target-hotkey" class="form-control" placeholder="Ej. Ctrl+Shift+M, Alt+Tab, F13, Ctrl+C">
+            <small style="color:#8b949e; font-size:11px; display:block; margin:6px 0 4px 0;">
+              💡 Pulsa un atajo rápido:
+            </small>
+            <div class="emoji-row">
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+shift+m'" style="font-size:11px;">Mute Discord/OBS</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='alt+tab'" style="font-size:11px;">Alt+Tab</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='f13'" style="font-size:11px;">F13</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='f14'" style="font-size:11px;">F14</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+c'" style="font-size:11px;">Copiar</button>
+              <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+v'" style="font-size:11px;">Pegar</button>
+            </div>
+          </div>
+
+          <!-- CAMPO FOLDER -->
+          <div class="form-group" id="group-folder" style="display:none;">
+            <div style="background:rgba(88,166,255,0.1); border:1px solid rgba(88,166,255,0.3); border-radius:8px; padding:12px; color:#c9d1d9; font-size:12px; line-height:1.5;">
+              📁 <b>Modo Carpeta / Sub-panel:</b><br>
+              Al pulsar este botón en tu Stream Deck, se abrirá un panel nuevo donde podrás organizar botones específicos (por ejemplo: Sonidos, Juegos, Streaming). Dentro de la carpeta siempre tendrás el botón <b>⬅️ Volver</b> en la primera tecla para regresar por memoria muscular.
+            </div>
+          </div>
+
+          <!-- CAMPO SISTEMA -->
+          <div class="form-group" id="group-system" style="display:none;">
+            <label>Acción de Hardware / Sistema:</label>
+            <select id="cfg-action-sys" class="form-control">
+              <option value="vol_up">🔊 Subir Volumen (+8%)</option>
+              <option value="vol_down">🔉 Bajar Volumen (-8%)</option>
+              <option value="vol_mute">🔇 Mutear / Desmutear</option>
+              <option value="stop_all_sounds">⏹️ Detener todos los sonidos en reproducción</option>
+              <option value="desktop">🖥️ Mostrar Escritorio</option>
+              <option value="lock_pc">🔒 Bloquear PC</option>
+              <option value="play_pause">⏯️ Play / Pausa Multimedia</option>
+              <option value="next_track">⏭️ Pista Siguiente</option>
+              <option value="prev_track">⏮️ Pista Anterior</option>
             </select>
-            <button class="btn-action-top" type="button" onclick="testSelectedApp()" title="Probar abrir aplicación en el PC">🚀 Probar</button>
-          </div>
-
-          <label style="font-size:11px; color:#8b949e; margin-bottom:3px;">Comando o ruta ejecutable:</label>
-          <input type="text" id="cfg-target-app" class="form-control" placeholder="calc, notepad, discord, o ruta C:\...exe">
-          <small style="color:#8b949e; font-size:10px; display:block; margin-top:4px;">
-            💡 Selecciona cualquier programa de tu PC en la lista superior, o escribe una ruta/comando personalizado.
-          </small>
-        </div>
-
-        <!-- CAMPO HOTKEY -->
-        <div class="form-group" id="group-hotkey" style="display:none;">
-          <label>Combinación de Teclas (Hotkey / Macro):</label>
-          <input type="text" id="cfg-target-hotkey" class="form-control" placeholder="Ej. Ctrl+Shift+M, Alt+Tab, F13, Ctrl+C">
-          <small style="color:#8b949e; font-size:10px; display:block; margin-top:4px;">
-            💡 Simula pulsaciones físicas en Windows. Ejemplos rápidos:
-          </small>
-          <div class="emoji-row" style="margin-top:6px;">
-            <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+shift+m'" style="font-size:11px;">Mute Discord/OBS</button>
-            <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='alt+tab'" style="font-size:11px;">Alt+Tab</button>
-            <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='f13'" style="font-size:11px;">F13</button>
-            <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='f14'" style="font-size:11px;">F14</button>
-            <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+c'" style="font-size:11px;">Copiar</button>
-            <button type="button" class="emoji-btn" onclick="document.getElementById('cfg-target-hotkey').value='ctrl+v'" style="font-size:11px;">Pegar</button>
           </div>
         </div>
 
-        <!-- CAMPO FOLDER -->
-        <div class="form-group" id="group-folder" style="display:none;">
-          <p style="font-size:12px; color:#58a6ff; margin:0 0 6px 0; background:rgba(88,166,255,0.1); padding:8px 12px; border-radius:6px; border:1px solid rgba(88,166,255,0.3);">
-            📁 <b>Modo Carpeta:</b> Este botón abrirá un nuevo panel dedicado donde podrás almacenar y organizar más botones sin saturar tu pantalla principal.
-          </p>
-        </div>
+        <!-- PASO 3: ESTILO Y VISTA PREVIA -->
+        <div class="wizard-page" id="wizard-page-3" style="display:none;">
+          <!-- Vista previa en tiempo real -->
+          <div class="preview-container">
+            <span style="font-size:10px; color:#8b949e; text-transform:uppercase; font-weight:bold; letter-spacing:0.5px; margin-bottom:6px;">Vista previa en vivo:</span>
+            <div class="preview-card-wrap">
+              <div class="deck-btn theme-sys" id="live-preview-btn">
+                <span class="icon-emoji" id="prev-icon">⚡</span>
+                <span class="btn-text" id="prev-title">Botón</span>
+              </div>
+            </div>
+          </div>
 
-        <!-- CAMPO SOUNDBOARD -->
-        <div class="form-group" id="group-sound" style="display:none;">
-          <label>Archivo de Sonido:</label>
-          <div style="display:flex; gap:6px; margin-bottom:8px;">
-            <select id="cfg-target-sound" class="form-control" onchange="onSoundSelectChanged()" style="flex:1;">
-              <option value="">Seleccionar sonido...</option>
-              <option value="__upload__">➕ 📁 Seleccionar de mi PC...</option>
+          <div class="form-group">
+            <label>Nombre / Etiqueta del botón:</label>
+            <input type="text" id="cfg-title" class="form-control" placeholder="Ej. Discord, Spotify, Ta-Dá..." oninput="updateLivePreview()">
+          </div>
+
+          <div class="form-group" id="group-parent-folder">
+            <label>Ubicación / Carpeta:</label>
+            <select id="cfg-folder-select" class="form-control">
+              <option value="root">🏠 Pantalla Principal (Inicio)</option>
             </select>
-            <button class="btn-action-top" type="button" onclick="testSelectedSound()" title="Probar sonido en PC">▶️ Probar</button>
           </div>
 
-          <input type="file" id="sound-file-input" accept=".mp3,.wav,.ogg,.wma,.m4a,audio/*" style="display:none;" onchange="handleSoundFileUpload(this)">
-          
-          <button type="button" class="btn-action-top" style="width:100%; justify-content:center; gap:8px; padding:8px 12px; background:#21262d; border:1px dashed #58a6ff; color:#58a6ff; font-weight:600; border-radius:8px;" onclick="document.getElementById('sound-file-input').click()">
-            📂 Elegir sonido de mi PC (.mp3, .wav) y copiar
-          </button>
-          
-          <div id="sound-upload-status" style="font-size:11px; margin-top:6px; display:none; padding:6px 10px; border-radius:6px; background:#0d1117; border:1px solid #30363d;"></div>
-        </div>
-
-        <!-- CAMPO SISTEMA -->
-        <div class="form-group" id="group-system" style="display:none;">
-          <label>Acción de Hardware:</label>
-          <select id="cfg-action-sys" class="form-control">
-            <option value="vol_up">🔊 Subir Volumen (+8%)</option>
-            <option value="vol_down">🔉 Bajar Volumen (-8%)</option>
-            <option value="vol_mute">🔇 Mutear / Desmutear</option>
-            <option value="stop_all_sounds">⏹️ Detener todos los sonidos en reproducción</option>
-            <option value="desktop">🖥️ Mostrar Escritorio</option>
-            <option value="lock_pc">🔒 Bloquear PC</option>
-            <option value="play_pause">⏯️ Play / Pausa Multimedia</option>
-            <option value="next_track">⏭️ Pista Siguiente</option>
-            <option value="prev_track">⏮️ Pista Anterior</option>
-          </select>
-        </div>
-
-        <!-- COLOR TEMA -->
-        <div class="form-group">
-          <label>Color Neón:</label>
-          <div class="color-picker-row" id="color-chips">
-            <div class="color-chip" style="background:#2ea043;" data-theme="theme-media" title="Verde Multimedia"></div>
-            <div class="color-chip" style="background:#1f6feb;" data-theme="theme-sys" title="Azul Sistema"></div>
-            <div class="color-chip" style="background:#8957e5;" data-theme="theme-dev" title="Violeta Desarrollo"></div>
-            <div class="color-chip" style="background:#da3633;" data-theme="theme-danger" title="Rojo Peligro"></div>
-            <div class="color-chip" style="background:#d29922;" data-theme="theme-util" title="Ámbar Utilidades"></div>
-            <div class="color-chip" style="background:#db61a2;" data-theme="theme-pink" title="Rosa Neón"></div>
-            <div class="color-chip" style="background:#38bdf8;" data-theme="theme-cyan" title="Cian Neón"></div>
+          <!-- COLOR TEMA -->
+          <div class="form-group">
+            <label>Color Neón:</label>
+            <div class="color-picker-row" id="color-chips">
+              <div class="color-chip" style="background:#2ea043;" data-theme="theme-media" title="Verde Multimedia"></div>
+              <div class="color-chip" style="background:#1f6feb;" data-theme="theme-sys" title="Azul Sistema"></div>
+              <div class="color-chip" style="background:#8957e5;" data-theme="theme-dev" title="Violeta Desarrollo"></div>
+              <div class="color-chip" style="background:#da3633;" data-theme="theme-danger" title="Rojo Peligro"></div>
+              <div class="color-chip" style="background:#d29922;" data-theme="theme-util" title="Ámbar Utilidades"></div>
+              <div class="color-chip" style="background:#db61a2;" data-theme="theme-pink" title="Rosa Neón"></div>
+              <div class="color-chip" style="background:#38bdf8;" data-theme="theme-cyan" title="Cian Neón"></div>
+            </div>
           </div>
-        </div>
 
-        <!-- ICONO O EMOJI O IMAGEN -->
-        <div class="form-group">
-          <label>Icono, Emoji o Logo:</label>
-          <div style="display:flex; gap:6px;">
-            <input type="text" id="cfg-icon" class="form-control" placeholder="Ej. 🎉, 🎵, 🎮, code, /icons/logo.png..." style="flex:1;">
-            <button type="button" class="btn-action-top" onclick="document.getElementById('icon-file-input').click()" title="Subir logo o imagen personalizada">📁 Subir Logo</button>
+          <!-- ICONO O EMOJI O IMAGEN -->
+          <div class="form-group">
+            <label>Icono, Emoji o Logo:</label>
+            <div style="display:flex; gap:6px;">
+              <input type="text" id="cfg-icon" class="form-control" placeholder="Ej. 🎉, 🎵, 🎮, code, /icons/logo.png..." style="flex:1;" oninput="updateLivePreview()">
+              <button type="button" class="btn-action-top" onclick="document.getElementById('icon-file-input').click()" title="Subir logo o imagen personalizada">📁 Subir Logo</button>
+            </div>
+            <input type="file" id="icon-file-input" accept="image/png,image/jpeg,image/svg+xml,image/webp" style="display:none;" onchange="handleIconUpload(this)">
+            <div id="icon-upload-status" style="font-size:11px; display:none; margin-top:4px;"></div>
+            
+            <div class="emoji-row" style="margin-top:8px;">
+              <button type="button" class="emoji-btn" onclick="selectEmoji('📁')">📁</button>
+              <button type="button" class="emoji-btn" onclick="selectEmoji('🎉')">🎉</button>
+              <button type="button" class="emoji-btn" onclick="selectEmoji('🎵')">🎵</button>
+              <button type="button" class="emoji-btn" onclick="selectEmoji('🎮')">🎮</button>
+              <button type="button" class="emoji-btn" onclick="selectEmoji('🚀')">🚀</button>
+              <button type="button" class="emoji-btn" onclick="selectEmoji('📺')">📺</button>
+              <button type="button" class="emoji-btn" onclick="selectEmoji('🔥')">🔥</button>
+              <button type="button" class="emoji-btn" onclick="selectEmoji('💬')">💬</button>
+              <button type="button" class="emoji-btn" onclick="selectEmoji('⭐')">⭐</button>
+              <button type="button" class="emoji-btn" onclick="selectEmoji('🎬')">🎬</button>
+              <button type="button" class="emoji-btn" onclick="selectEmoji('⚡')">⚡</button>
+            </div>
           </div>
-          <input type="file" id="icon-file-input" accept="image/png,image/jpeg,image/svg+xml,image/webp" style="display:none;" onchange="handleIconUpload(this)">
-          <div id="icon-upload-status" style="font-size:11px; display:none; margin-top:4px;"></div>
-          
-          <div class="emoji-row" style="margin-top:8px;">
-            <button type="button" class="emoji-btn" onclick="selectEmoji('📁')">📁</button>
-            <button type="button" class="emoji-btn" onclick="selectEmoji('🎉')">🎉</button>
-            <button type="button" class="emoji-btn" onclick="selectEmoji('🎵')">🎵</button>
-            <button type="button" class="emoji-btn" onclick="selectEmoji('🎮')">🎮</button>
-            <button type="button" class="emoji-btn" onclick="selectEmoji('🚀')">🚀</button>
-            <button type="button" class="emoji-btn" onclick="selectEmoji('📺')">📺</button>
-            <button type="button" class="emoji-btn" onclick="selectEmoji('🔥')">🔥</button>
-            <button type="button" class="emoji-btn" onclick="selectEmoji('💬')">💬</button>
-            <button type="button" class="emoji-btn" onclick="selectEmoji('⭐')">⭐</button>
-            <button type="button" class="emoji-btn" onclick="selectEmoji('🎬')">🎬</button>
-            <button type="button" class="emoji-btn" onclick="selectEmoji('⚡')">⚡</button>
+
+          <div class="form-group" id="group-reorder" style="display:none; margin-top:14px; padding-top:10px; border-top:1px solid #30363d;">
+            <label>Ajustar Orden en Rejilla:</label>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <button type="button" class="btn-action-top" style="flex:1; justify-content:center;" onclick="moveCurrentButton(-1)">◀️ Mover Atrás</button>
+              <span id="reorder-info" style="font-size:12px; color:#8b949e; font-weight:bold; min-width:65px; text-align:center;">1 de 12</span>
+              <button type="button" class="btn-action-top" style="flex:1; justify-content:center;" onclick="moveCurrentButton(1)">▶️ Mover Adelante</button>
+            </div>
           </div>
         </div>
 
       </div>
+
+      <!-- FOOTER DE NAVEGACION DEL WIZARD -->
       <div class="modal-footer">
         <button class="btn-modal btn-delete" id="btn-delete-modal" onclick="deleteCurrentButton()">🗑️ Eliminar</button>
-        <div style="display:flex; gap:8px;">
-          <button class="btn-modal btn-cancel" onclick="closeEditModal()">Cancelar</button>
-          <button class="btn-modal btn-save" onclick="saveCurrentButton()">💾 Guardar</button>
+        <div class="wizard-nav-btns">
+          <button class="btn-modal btn-cancel" id="btn-wizard-prev" onclick="changeWizardStep(-1)">◀ Anterior</button>
+          <button class="btn-modal btn-save" id="btn-wizard-next" onclick="changeWizardStep(1)">Siguiente ▶</button>
+          <button class="btn-modal btn-save" id="btn-wizard-save" onclick="saveCurrentButton()" style="display:none;">💾 Guardar</button>
         </div>
       </div>
     </div>
@@ -1178,15 +1517,18 @@
     function openFolder(fldId, fldTitle) {
       currentFolder = fldId;
       currentPage = 0;
-      document.getElementById('current-folder-title').textContent = fldTitle || 'Carpeta';
-      document.getElementById('folder-nav-bar').style.display = 'flex';
+      var titleEl = document.getElementById('current-folder-title');
+      if (titleEl) titleEl.textContent = fldTitle || 'Carpeta';
+      var tag = document.getElementById('folder-breadcrumb-tag');
+      if (tag) tag.style.display = 'inline-flex';
       renderGrid();
     }
 
     function navigateBackFolder() {
       currentFolder = 'root';
       currentPage = 0;
-      document.getElementById('folder-nav-bar').style.display = 'none';
+      var tag = document.getElementById('folder-breadcrumb-tag');
+      if (tag) tag.style.display = 'none';
       renderGrid();
     }
 
@@ -1194,7 +1536,10 @@
       var filtered = getFilteredButtons();
       var isNarrow = window.innerWidth <= 580;
       var cols = isNarrow ? 3 : 4;
-      var pageSize = cols * 3;
+      var rows = 3;
+      var totalSlots = cols * rows;
+      var isInsideFolder = (currentFolder !== 'root');
+      var pageSize = isInsideFolder ? (totalSlots - 1) : totalSlots;
       var totalItems = filtered.length + (editMode ? 1 : 0);
       var totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
       var newPage = currentPage + delta;
@@ -1284,6 +1629,7 @@
             statusDiv.style.color = '#3fb950';
             statusDiv.innerHTML = '✅ ¡Logo subido con éxito!';
             document.getElementById('cfg-icon').value = res.url;
+            updateLivePreview();
           } else {
             statusDiv.style.color = '#f85149';
             statusDiv.innerHTML = '❌ ' + (res.message || 'Error al subir');
@@ -1299,7 +1645,7 @@
       reader.readAsDataURL(file);
     }
 
-    // --- Renderizado de Grilla con Paginación y Drag & Drop ---
+    // --- Renderizado de Grilla con Paginación y Drag & Drop Unificado ---
     function renderGrid() {
       var grid = document.getElementById('deck-grid');
       grid.innerHTML = '';
@@ -1308,7 +1654,9 @@
       var isNarrow = window.innerWidth <= 580;
       var cols = isNarrow ? 3 : 4;
       var rows = 3;
-      var pageSize = cols * rows;
+      var totalSlots = cols * rows;
+      var isInsideFolder = (currentFolder !== 'root');
+      var pageSize = isInsideFolder ? (totalSlots - 1) : totalSlots;
 
       var totalDisplayItems = filtered.length + (editMode ? 1 : 0);
       var totalPages = Math.max(1, Math.ceil(totalDisplayItems / pageSize));
@@ -1318,6 +1666,24 @@
       grid.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
       grid.style.gridTemplateRows = 'repeat(' + rows + ', 1fr)';
 
+      // 1. Si estamos dentro de una carpeta, la tecla (0,0) SIEMPRE es el botón "Volver" (Memoria Muscular)
+      if (isInsideFolder) {
+        var backBtn = document.createElement('div');
+        backBtn.className = 'deck-btn theme-sys btn-deck-back';
+        backBtn.innerHTML = '<span class="icon-emoji">⬅️</span>' +
+          '<span class="btn-text">Volver</span>' +
+          '<span class="back-indicator-badge">Atrás</span>';
+
+        function doGoBack(e) {
+          if (e) e.preventDefault();
+          playTactileClick();
+          if (navigator.vibrate) { try { navigator.vibrate(30); } catch(err) {} }
+          navigateBackFolder();
+        }
+        backBtn.onclick = doGoBack;
+        grid.appendChild(backBtn);
+      }
+
       var startIdx = currentPage * pageSize;
       var endIdx = startIdx + pageSize;
       var pageItems = filtered.slice(startIdx, endIdx);
@@ -1325,93 +1691,20 @@
       for (var i = 0; i < pageItems.length; i++) {
         (function(item) {
           var btn = item.btn;
-          var globalIdx = item.globalIndex;
           var el = document.createElement('div');
           el.className = 'deck-btn ' + (btn.theme || 'theme-sys');
           el.innerHTML = renderIcon(btn.icon) + 
             '<span class="btn-text">' + escapeHtml(btn.title || 'Botón') + '</span>' +
             '<span class="edit-badge">✏️</span>';
 
-          if (editMode) {
-            el.setAttribute('draggable', 'true');
-            el.ondragstart = function(e) {
-              draggedGlobalIndex = globalIdx;
-              e.dataTransfer.effectAllowed = 'move';
-              e.dataTransfer.setData('text/plain', globalIdx);
-              el.classList.add('dragging');
-            };
-            el.ondragover = function(e) {
-              if (e.preventDefault) e.preventDefault();
-              e.dataTransfer.dropEffect = 'move';
-              el.classList.add('drag-over');
-            };
-            el.ondragleave = function() {
-              el.classList.remove('drag-over');
-            };
-            el.ondrop = function(e) {
-              if (e.preventDefault) e.preventDefault();
-              el.classList.remove('drag-over');
-              if (draggedGlobalIndex !== null && draggedGlobalIndex !== globalIdx) {
-                moveButton(draggedGlobalIndex, globalIdx);
-              }
-            };
-            el.ondragend = function() {
-              el.classList.remove('dragging');
-              draggedGlobalIndex = null;
-            };
-          }
-
-          function doPress(e) {
-            if (e && e.preventDefault) e.preventDefault();
-            if (editMode) {
-              openEditModal(globalIdx);
-              return;
-            }
-
-            el.className += ' pressed';
-            setTimeout(function() {
-              el.className = el.className.replace(' pressed', '');
-            }, 110);
-
-            playTactileClick();
-            if (navigator.vibrate) {
-              try { navigator.vibrate(35); } catch(err) {}
-            }
-
-            if (btn.type === 'folder') {
-              openFolder(btn.target, btn.title);
-              return;
-            }
-
-            if (btn.type === 'sound') {
-              el.classList.add('audio-active');
-              var stopBtn = document.getElementById('btn-stop-audio');
-              if (stopBtn) stopBtn.classList.add('playing');
-              setTimeout(function() {
-                el.classList.remove('audio-active');
-                if (!document.querySelector('.deck-btn.audio-active') && stopBtn) {
-                  stopBtn.classList.remove('playing');
-                }
-              }, 7000);
-            }
-
-            triggerAction(btn);
-          }
-
-          el.onclick = doPress;
-          if ('ontouchstart' in window) {
-            el.ontouchstart = function(e) {
-              doPress(e);
-              if (e && e.cancelable) e.preventDefault();
-            };
-          }
-
+          attachButtonDragAndTap(el, item);
           grid.appendChild(el);
         })(pageItems[i]);
       }
 
       // Botón para agregar nuevo si está en modo edición
-      if (editMode && pageItems.length < pageSize) {
+      var currentSlotsUsed = pageItems.length + (isInsideFolder ? 1 : 0);
+      if (editMode && currentSlotsUsed < totalSlots) {
         var addBtn = document.createElement('div');
         addBtn.className = 'deck-btn deck-btn-add';
         addBtn.innerHTML = '<span class="icon-emoji">➕</span><span class="btn-text">Nuevo Botón</span>';
@@ -1443,6 +1736,122 @@
       }
     }
 
+    function attachButtonDragAndTap(el, item) {
+      var btn = item.btn;
+      var globalIdx = item.globalIndex;
+      el.setAttribute('data-global-index', globalIdx);
+
+      el.onpointerdown = function(e) {
+        if (e.button && e.button !== 0) return;
+
+        var startX = e.clientX;
+        var startY = e.clientY;
+        var isDragging = false;
+        var ghost = null;
+
+        function onPointerMove(me) {
+          var dx = me.clientX - startX;
+          var dy = me.clientY - startY;
+
+          if (editMode && !isDragging && Math.hypot(dx, dy) > 8) {
+            isDragging = true;
+            el.classList.add('is-being-dragged');
+
+            ghost = el.cloneNode(true);
+            ghost.id = 'active-drag-ghost';
+            ghost.style.position = 'fixed';
+            ghost.style.pointerEvents = 'none';
+            ghost.style.zIndex = '99999';
+            ghost.style.width = el.offsetWidth + 'px';
+            ghost.style.height = el.offsetHeight + 'px';
+            ghost.style.opacity = '0.88';
+            ghost.style.boxShadow = '0 16px 36px rgba(0,0,0,0.8), 0 0 20px rgba(88,166,255,0.7)';
+            ghost.style.transform = 'translate(-50%, -50%) scale(1.08)';
+            ghost.style.left = me.clientX + 'px';
+            ghost.style.top = me.clientY + 'px';
+            ghost.classList.remove('is-being-dragged');
+            document.body.appendChild(ghost);
+          }
+
+          if (isDragging) {
+            if (ghost) {
+              ghost.style.left = me.clientX + 'px';
+              ghost.style.top = me.clientY + 'px';
+            }
+            var under = document.elementFromPoint(me.clientX, me.clientY);
+            var targetBtn = under ? under.closest('.deck-btn:not(.btn-deck-back):not(.deck-btn-add)') : null;
+            var allOver = document.querySelectorAll('.deck-btn.drag-over');
+            for (var j = 0; j < allOver.length; j++) {
+              if (allOver[j] !== targetBtn) allOver[j].classList.remove('drag-over');
+            }
+            if (targetBtn && targetBtn !== el) {
+              targetBtn.classList.add('drag-over');
+            }
+          }
+        }
+
+        function onPointerUp(ue) {
+          window.removeEventListener('pointermove', onPointerMove);
+          window.removeEventListener('pointerup', onPointerUp);
+          window.removeEventListener('pointercancel', onPointerUp);
+
+          if (isDragging) {
+            if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
+            el.classList.remove('is-being-dragged');
+
+            var under = document.elementFromPoint(ue.clientX, ue.clientY);
+            var targetBtn = under ? under.closest('.deck-btn:not(.btn-deck-back):not(.deck-btn-add)') : null;
+            var allOver = document.querySelectorAll('.deck-btn.drag-over');
+            for (var j = 0; j < allOver.length; j++) allOver[j].classList.remove('drag-over');
+
+            if (targetBtn && targetBtn.hasAttribute('data-global-index')) {
+              var targetIdx = parseInt(targetBtn.getAttribute('data-global-index'), 10);
+              if (!isNaN(targetIdx) && targetIdx !== globalIdx) {
+                moveButton(globalIdx, targetIdx);
+              }
+            }
+          } else {
+            if (editMode) {
+              openEditModal(globalIdx);
+            } else {
+              el.className += ' pressed';
+              setTimeout(function() {
+                el.className = el.className.replace(' pressed', '');
+              }, 110);
+
+              playTactileClick();
+              if (navigator.vibrate) {
+                try { navigator.vibrate(35); } catch(err) {}
+              }
+
+              if (btn.type === 'folder') {
+                openFolder(btn.target, btn.title);
+                return;
+              }
+
+              if (btn.type === 'sound') {
+                el.classList.add('audio-active');
+                var stopBtn = document.getElementById('btn-stop-audio');
+                if (stopBtn) stopBtn.classList.add('playing');
+                setTimeout(function() {
+                  el.classList.remove('audio-active');
+                  if (!document.querySelector('.deck-btn.audio-active') && stopBtn) {
+                    stopBtn.classList.remove('playing');
+                  }
+                }, 7000);
+              }
+
+              triggerAction(btn);
+            }
+          }
+        }
+
+        window.addEventListener('pointermove', onPointerMove, { passive: false });
+        window.addEventListener('pointerup', onPointerUp);
+        window.addEventListener('pointercancel', onPointerUp);
+      };
+    }
+
     function triggerAction(btn) {
       var xhr = new XMLHttpRequest();
       xhr.open('POST', '/api/action', true);
@@ -1462,21 +1871,109 @@
       var icon = document.getElementById('edit-icon');
       var label = document.getElementById('edit-label');
 
+      var menuLabel = document.getElementById('menu-edit-label');
+      var menuIcon = document.getElementById('menu-edit-icon');
+
       if (editMode) {
         app.className += ' edit-mode';
-        btn.className += ' btn-edit-active';
-        icon.innerHTML = '💾';
-        label.innerHTML = 'Listo';
+        if (btn) btn.className += ' btn-edit-active';
+        if (icon) icon.innerHTML = '💾';
+        if (label) label.innerHTML = 'Listo';
+        if (menuLabel) menuLabel.innerHTML = 'Listo (Guardar)';
+        if (menuIcon) menuIcon.innerHTML = '💾';
       } else {
         app.className = app.className.replace(' edit-mode', '');
-        btn.className = btn.className.replace(' btn-edit-active', '');
-        icon.innerHTML = '⚙️';
-        label.innerHTML = 'Personalizar';
+        if (btn) btn.className = btn.className.replace(' btn-edit-active', '');
+        if (icon) icon.innerHTML = '⚙️';
+        if (label) label.innerHTML = 'Personalizar';
+        if (menuLabel) menuLabel.innerHTML = 'Personalizar Botones';
+        if (menuIcon) menuIcon.innerHTML = '⚙️';
       }
       renderGrid();
     }
 
-    // --- Modal de Configuración ---
+    // --- Modal Wizard de Configuración (3 Pasos) ---
+    var currentWizardStep = 1;
+
+    function selectTypeCard(type) {
+      document.getElementById('cfg-type').value = type;
+      var cards = document.querySelectorAll('.type-card');
+      for (var i = 0; i < cards.length; i++) {
+        if (cards[i].getAttribute('data-type') === type) {
+          cards[i].classList.add('selected');
+        } else {
+          cards[i].classList.remove('selected');
+        }
+      }
+      onTypeChanged();
+      goToWizardStep(2);
+    }
+
+    function goToWizardStep(step) {
+      currentWizardStep = step;
+      document.getElementById('wizard-page-1').style.display = (step === 1 ? 'block' : 'none');
+      document.getElementById('wizard-page-2').style.display = (step === 2 ? 'block' : 'none');
+      document.getElementById('wizard-page-3').style.display = (step === 3 ? 'block' : 'none');
+
+      document.getElementById('tab-step-1').className = 'wizard-step-tab' + (step === 1 ? ' active' : '');
+      document.getElementById('tab-step-2').className = 'wizard-step-tab' + (step === 2 ? ' active' : '');
+      document.getElementById('tab-step-3').className = 'wizard-step-tab' + (step === 3 ? ' active' : '');
+
+      document.getElementById('wizard-step-badge').textContent = 'Paso ' + step + ' de 3';
+
+      var btnPrev = document.getElementById('btn-wizard-prev');
+      var btnNext = document.getElementById('btn-wizard-next');
+      var btnSave = document.getElementById('btn-wizard-save');
+
+      if (btnPrev) btnPrev.style.display = (step > 1 ? 'flex' : 'none');
+      if (btnNext) btnNext.style.display = (step < 3 ? 'flex' : 'none');
+      if (btnSave) btnSave.style.display = (step === 3 ? 'flex' : 'none');
+
+      if (step === 3) {
+        updateLivePreview();
+      }
+    }
+
+    function changeWizardStep(delta) {
+      var next = currentWizardStep + delta;
+      if (next >= 1 && next <= 3) {
+        goToWizardStep(next);
+      }
+    }
+
+    function updateLivePreview() {
+      var title = document.getElementById('cfg-title').value.trim() || 'Botón';
+      var icon = document.getElementById('cfg-icon').value.trim() || '⚡';
+      var prevBtn = document.getElementById('live-preview-btn');
+      if (prevBtn) {
+        prevBtn.className = 'deck-btn ' + selectedTheme;
+        prevBtn.innerHTML = renderIcon(icon) + '<span class="btn-text">' + escapeHtml(title) + '</span>';
+      }
+    }
+
+    function toggleMoreMenu(e) {
+      if (e) e.stopPropagation();
+      var menu = document.getElementById('more-menu-dropdown');
+      if (menu) {
+        menu.style.display = (menu.style.display === 'block' ? 'none' : 'block');
+      }
+    }
+
+    function updateMenuSoundLabel() {
+      var lbl = document.getElementById('menu-sound-label');
+      var ico = document.getElementById('menu-sound-icon');
+      if (lbl) lbl.textContent = soundEnabled ? 'Sonido Táctil: Activado' : 'Sonido Táctil: Desactivado';
+      if (ico) ico.textContent = soundEnabled ? '🔊' : '🔇';
+    }
+
+    document.addEventListener('click', function(e) {
+      var menu = document.getElementById('more-menu-dropdown');
+      var btn = document.getElementById('btn-more-menu');
+      if (menu && menu.style.display === 'block' && !menu.contains(e.target) && e.target !== btn) {
+        menu.style.display = 'none';
+      }
+    });
+
     function escapeHtml(str) {
       if (!str) return '';
       var div = document.createElement('div');
@@ -1561,7 +2058,6 @@
             }
             populateSoundDropdown(res.sounds, res.filename);
             
-            // Sugerir nombre e icono automáticamente si está vacío o por defecto
             var titleInput = document.getElementById('cfg-title');
             if (!titleInput.value || titleInput.value === 'Botón' || titleInput.value === '¡Ta-dá! 🎉') {
               var cleanTitle = res.filename.replace(/\.[^/.]+$/, "");
@@ -1571,6 +2067,7 @@
             if (!iconInput.value || iconInput.value === '⭐') {
               iconInput.value = '🔊';
             }
+            updateLivePreview();
           } else {
             statusDiv.style.color = '#f85149';
             statusDiv.style.borderColor = '#da3633';
@@ -1681,6 +2178,7 @@
         if (!iconInput.value || iconInput.value === '⭐') {
           iconInput.value = suggestedIcon || '🚀';
         }
+        updateLivePreview();
       }
     }
 
@@ -1715,7 +2213,7 @@
     function openEditModal(index) {
       currentEditingIndex = index;
       var modal = document.getElementById('edit-modal');
-      var heading = document.getElementById('modal-heading');
+      var heading = document.getElementById('modal-heading').querySelector('span');
       var btnDelete = document.getElementById('btn-delete-modal');
       var statusDiv = document.getElementById('sound-upload-status');
       if (statusDiv) {
@@ -1735,7 +2233,7 @@
 
       if (index >= 0 && buttonsData[index]) {
         var btn = buttonsData[index];
-        heading.innerHTML = '🛠️ Editar: ' + escapeHtml(btn.title || 'Botón');
+        if (heading) heading.innerHTML = '🛠️ Editar: ' + escapeHtml(btn.title || 'Botón');
         document.getElementById('cfg-title').value = btn.title || '';
         document.getElementById('cfg-type').value = btn.type || 'system';
         document.getElementById('cfg-target-url').value = btn.type === 'url' ? (btn.target || '') : '';
@@ -1744,7 +2242,7 @@
         document.getElementById('cfg-action-sys').value = btn.type === 'system' ? (btn.action || 'vol_up') : 'vol_up';
         document.getElementById('cfg-icon').value = btn.icon || '';
         selectedTheme = btn.theme || 'theme-sys';
-        btnDelete.style.display = 'block';
+        btnDelete.style.display = 'flex';
 
         populateFolderSelect(btn.folder || 'root');
 
@@ -1759,8 +2257,18 @@
           var posInFolder = filteredIndices.indexOf(index);
           updateReorderUI(posInFolder + 1, filteredIndices.length);
         }
+
+        var cards = document.querySelectorAll('.type-card');
+        for (var i = 0; i < cards.length; i++) {
+          if (cards[i].getAttribute('data-type') === (btn.type || 'system')) {
+            cards[i].classList.add('selected');
+          } else {
+            cards[i].classList.remove('selected');
+          }
+        }
+        goToWizardStep(2);
       } else {
-        heading.innerHTML = '➕ Nuevo Botón';
+        if (heading) heading.innerHTML = '➕ Nuevo Botón';
         document.getElementById('cfg-title').value = '';
         document.getElementById('cfg-type').value = 'url';
         document.getElementById('cfg-target-url').value = '';
@@ -1774,10 +2282,21 @@
         populateFolderSelect(currentFolder || 'root');
         var groupReorder = document.getElementById('group-reorder');
         if (groupReorder) groupReorder.style.display = 'none';
+
+        var cards = document.querySelectorAll('.type-card');
+        for (var i = 0; i < cards.length; i++) {
+          if (cards[i].getAttribute('data-type') === 'url') {
+            cards[i].classList.add('selected');
+          } else {
+            cards[i].classList.remove('selected');
+          }
+        }
+        goToWizardStep(1);
       }
 
       updateColorChips();
       onTypeChanged();
+      updateLivePreview();
       modal.style.display = 'flex';
     }
 
@@ -1810,6 +2329,8 @@
         var currentTarget = document.getElementById('cfg-target-app').value;
         loadInstalledApps(currentTarget);
       }
+
+      updateLivePreview();
     }
 
     function testSelectedSound() {
@@ -1850,12 +2371,14 @@
         chips[i].onclick = function() {
           selectedTheme = this.getAttribute('data-theme');
           updateColorChips();
+          updateLivePreview();
         };
       }
     }
 
     function selectEmoji(em) {
       document.getElementById('cfg-icon').value = em;
+      updateLivePreview();
     }
 
     function saveCurrentButton() {
@@ -1876,6 +2399,7 @@
         target = document.getElementById('cfg-target-app').value.trim();
         if (!target) {
           alert('Por favor selecciona una aplicación de la lista o escribe una ruta/comando.');
+          goToWizardStep(2);
           return;
         }
       } else if (type === 'sound') {
@@ -1883,12 +2407,14 @@
         if (target === '__upload__') target = '';
         if (!target) {
           alert('Por favor selecciona un sonido de la lista o elige un archivo desde tu PC.');
+          goToWizardStep(2);
           return;
         }
       } else if (type === 'hotkey') {
         target = document.getElementById('cfg-target-hotkey').value.trim();
         if (!target) {
           alert('Por favor escribe una combinación de teclas (ej. ctrl+shift+m o alt+tab).');
+          goToWizardStep(2);
           return;
         }
       } else if (type === 'folder') {
@@ -1936,7 +2462,8 @@
           }
           if (currentFolder === fldId) {
             currentFolder = 'root';
-            document.getElementById('folder-nav-bar').style.display = 'none';
+            var tag = document.getElementById('folder-breadcrumb-tag');
+            if (tag) tag.style.display = 'none';
           }
         }
         buttonsData.splice(currentEditingIndex, 1);
@@ -1999,9 +2526,13 @@
             if (cpuEl) cpuEl.innerHTML = cpu + '%';
             if (ramEl) ramEl.innerHTML = ram + '%';
 
+            var mCpuEl = document.getElementById('menu-cpu-val');
+            var mRamEl = document.getElementById('menu-ram-val');
+            if (mCpuEl) mCpuEl.innerHTML = cpu + '%';
+            if (mRamEl) mRamEl.innerHTML = ram + '%';
+
             var cpuBar = document.getElementById('cpu-bar');
             var ramBar = document.getElementById('ram-bar');
-
             if (cpuBar) {
               cpuBar.style.width = cpu + '%';
               cpuBar.style.background = cpu > 80 ? '#f85149' : (cpu > 50 ? '#d29922' : '#3fb950');
@@ -2009,6 +2540,17 @@
             if (ramBar) {
               ramBar.style.width = ram + '%';
               ramBar.style.background = ram > 85 ? '#f85149' : (ram > 65 ? '#d29922' : '#3fb950');
+            }
+
+            var mCpuBar = document.getElementById('menu-cpu-bar');
+            var mRamBar = document.getElementById('menu-ram-bar');
+            if (mCpuBar) {
+              mCpuBar.style.width = cpu + '%';
+              mCpuBar.style.background = cpu > 80 ? '#f85149' : (cpu > 50 ? '#d29922' : '#3fb950');
+            }
+            if (mRamBar) {
+              mRamBar.style.width = ram + '%';
+              mRamBar.style.background = ram > 85 ? '#f85149' : (ram > 65 ? '#d29922' : '#3fb950');
             }
 
             var st = document.getElementById('status-indicator');
@@ -2019,7 +2561,7 @@
       xhr.send();
     }
 
-    // --- Soporte de Gestos Táctiles (Swipe Izquierda / Derecha para cambiar de página) ---
+    // --- Soporte de Gestos Táctiles (Swipe Izquierda / Derecha para cambiar de página o volver) ---
     var touchStartX = 0;
     var touchStartY = 0;
     var viewportEl = document.getElementById('deck-viewport');
@@ -2038,9 +2580,15 @@
         // Solo reaccionar si el desplazamiento horizontal es dominante y > 45px
         if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
           if (diffX < 0) {
-            changePage(1); // Deslizar hacia la izquierda -> avanzar a página siguiente
+            changePage(1); // Deslizar hacia la izquierda -> avanzar página
           } else {
-            changePage(-1); // Deslizar hacia la derecha -> volver a página anterior
+            // Deslizar hacia la derecha: si estamos dentro de una carpeta y en página 0, ¡volver atrás!
+            if (currentFolder !== 'root' && currentPage === 0) {
+              playTactileClick();
+              navigateBackFolder();
+            } else {
+              changePage(-1); // Página anterior
+            }
           }
         }
       }, { passive: true });
@@ -2054,7 +2602,11 @@
       if (e.key === 'ArrowRight') {
         changePage(1);
       } else if (e.key === 'ArrowLeft') {
-        changePage(-1);
+        if (currentFolder !== 'root' && currentPage === 0) {
+          navigateBackFolder();
+        } else {
+          changePage(-1);
+        }
       }
     });
 
