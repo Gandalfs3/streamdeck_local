@@ -106,41 +106,5 @@
     "action": "",
     "target": "calc",
     "icon": "calc"
-  },
-  {
-    "id": "btn_1793915792509",
-    "title": "risas",
-    "theme": "theme-cyan",
-    "type": "sound",
-    "action": "",
-    "target": "risa.mp3",
-    "icon": "🎵"
-  },
-  {
-    "id": "btn_1793915814908",
-    "title": "ta ta",
-    "theme": "theme-danger",
-    "type": "app",
-    "action": "",
-    "target": "brave",
-    "icon": "🚀"
-  },
-  {
-    "id": "btn_1793915831394",
-    "title": "risas3",
-    "theme": "theme-cyan",
-    "type": "system",
-    "action": "vol_mute",
-    "target": "",
-    "icon": "📺"
-  },
-  {
-    "id": "btn_1793977584359",
-    "title": "brave",
-    "theme": "theme-danger",
-    "type": "app",
-    "action": "",
-    "target": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Brave.lnk",
-    "icon": "📺"
   }
 ]

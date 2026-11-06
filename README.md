@@ -44,11 +44,15 @@ El programa incluye dos formas inteligentes de conectarse:
 
 ## 🚀 Características y Atajos Incluidos
 
+* **⚙️ Personalización Total de Botones (v1.1.0):** Modo de edición interactivo con el botón `⚙️ Personalizar`. Crea, modifica el nombre, icono, color y acción de cualquier botón o bórralo con un toque.
+* **🚀 Lanzador de Aplicaciones y Programas de PC:** Escaneo automático de programas instalados en tu menú de inicio (Chrome, Edge, Spotify, Discord, VS Code, Postman, etc.) con resolución nativa de accesos directos `.lnk` y apertura directa en tu monitor.
+* **🔊 Soundboard / Efectos de Sonido:** Botones para disparar efectos de sonido en vivo en tu PC con soporte para elegir archivos locales o subir tus propios audios `.mp3` o `.wav` directamente desde el móvil o tablet.
+* **🌐 Enlaces Web Directos:** Crea accesos rápidos para abrir cualquier URL o servicio web con un toque (YouTube, Twitch, ChatGPT, GitHub, etc.).
 * **📱 Código QR Interactivo:** Conexión en 2 segundos apuntando la cámara del móvil.
 * **✨ Botones Táctiles 3D:** Diseño inspirado en consolas Elgato con brillo gloss, animación física de pulsación y retroalimentación háptica.
-* **🔊 Sonido Mecánico Opcional:** Sonido táctil de click sintetizado por hardware (*Web Audio API*), 100% offline y conmutable con el botón `🔊 Sonido`.
+* **🔉 Sonido Mecánico Táctil Opcional:** Sonido de click mecánico sintetizado por hardware (*Web Audio API*), 100% offline y conmutable con el botón `🔊 Sonido`.
 * **🎵 Control Multimedia Directo:** Conexión nativa a la API de Windows Audio (`IAudioEndpointVolume` via Core Audio COM) para subir/bajar volumen maestro sin depender de atajos de teclado simulados.
-* **💻 Atajos Productivos:** Botones para VS Code, Terminal PowerShell, Servidor Localhost (`:3000`), Calculadora, Minimizar al Escritorio y Bloqueo de PC.
+* **💻 Atajos Productivos por Defecto:** Botones para VS Code, Terminal PowerShell, Calculadora, Minimizar al Escritorio y Bloqueo de PC.
 * **📊 Telemetría en Tiempo Real:** Monitor superior con porcentaje de uso de **CPU** y memoria **RAM** con barras dinámicas de advertencia.
 * **⛶ Modo Pantalla Completa:** Oculta barras de navegación para usar tablets como consolas dedicadas fijas.
 * **📱 Compatibilidad Retro Extrema:** Desarrollado en Vanilla ES5 y gráficos vectoriales SVG compatibles tanto con smartphones modernos como con tablets antiguas (ej. Android 4.0 Ice Cream Sandwich).
