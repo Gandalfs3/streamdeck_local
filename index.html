@@ -1159,12 +1159,25 @@
         populateAppsDropdown(installedApps, selectedTarget);
         return;
       }
+      var select = document.getElementById('cfg-app-select');
+      if (select && (!select.options || select.options.length <= 1)) {
+        select.innerHTML = '<option value="">⏳ Cargando programas de tu PC...</option>';
+      }
       fetch('/api/apps')
-        .then(function(res) { return res.json(); })
+        .then(function(res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
         .then(function(apps) {
           populateAppsDropdown(apps, selectedTarget);
         })
-        .catch(function() {});
+        .catch(function(err) {
+          console.error("Error cargando programas:", err);
+          if (select) {
+            select.innerHTML = '<option value="">⚠️ No se pudo obtener la lista automática</option>' +
+                               '<option value="__custom__">✏️ Escribir comando o ruta manualmente...</option>';
+          }
+        });
     }
 
     function onAppSelectChanged() {
@@ -1274,6 +1287,10 @@
       document.getElementById('group-app').style.display = type === 'app' ? 'block' : 'none';
       document.getElementById('group-sound').style.display = type === 'sound' ? 'block' : 'none';
       document.getElementById('group-system').style.display = type === 'system' ? 'block' : 'none';
+      if (type === 'app') {
+        var currentTarget = document.getElementById('cfg-target-app').value;
+        loadInstalledApps(currentTarget);
+      }
     }
 
     function testSelectedSound() {
