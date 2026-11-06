@@ -7,3 +7,7 @@ __pycache__/
 *.pyc
 .vscode/
 .idea/
+sounds/*
+!sounds/campanas.wav
+!sounds/ding.wav
+!sounds/tada.wav

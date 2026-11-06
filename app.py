@@ -38,6 +38,13 @@ else:
     AUDIO_TOOL_PATH = os.path.join(BASE_DIR, "audio_tool.exe")
 
 CLOUDFLARED_PATH = os.path.join(APP_DIR, "cloudflared.exe")
+CONFIG_PATH = os.path.join(APP_DIR, "config.json")
+SOUNDS_DIR = os.path.join(APP_DIR, "sounds")
+if not os.path.exists(SOUNDS_DIR):
+    try:
+        os.makedirs(SOUNDS_DIR, exist_ok=True)
+    except Exception:
+        pass
 
 # --- Telemetria Nativa de Windows (Sin psutil) ---
 class FILETIME(ctypes.Structure):
@@ -104,6 +111,226 @@ def run_audio_tool(cmd):
         except Exception:
             pass
 
+def load_buttons():
+    if os.path.exists(CONFIG_PATH):
+        try:
+            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    defaults = [
+        {"id": "btn_1", "title": "Anterior", "theme": "theme-media", "type": "system", "action": "prev_track", "target": "", "icon": "prev"},
+        {"id": "btn_2", "title": "Play / Pausa", "theme": "theme-media", "type": "system", "action": "play_pause", "target": "", "icon": "play_pause"},
+        {"id": "btn_3", "title": "Siguiente", "theme": "theme-media", "type": "system", "action": "next_track", "target": "", "icon": "next"},
+        {"id": "btn_4", "title": "Mutear", "theme": "theme-danger", "type": "system", "action": "vol_mute", "target": "", "icon": "mute"},
+        {"id": "btn_5", "title": "Volumen -", "theme": "theme-sys", "type": "system", "action": "vol_down", "target": "", "icon": "vol_down"},
+        {"id": "btn_6", "title": "Volumen +", "theme": "theme-sys", "type": "system", "action": "vol_up", "target": "", "icon": "vol_up"},
+        {"id": "btn_7", "title": "Escritorio", "theme": "theme-sys", "type": "system", "action": "desktop", "target": "", "icon": "desktop"},
+        {"id": "btn_8", "title": "Bloquear PC", "theme": "theme-danger", "type": "system", "action": "lock_pc", "target": "", "icon": "lock"},
+        {"id": "btn_9", "title": "VS Code", "theme": "theme-dev", "type": "app", "action": "", "target": "code", "icon": "code"},
+        {"id": "btn_10", "title": "Terminal", "theme": "theme-dev", "type": "app", "action": "", "target": "powershell", "icon": "terminal"},
+        {"id": "btn_11", "title": "¡Ta-dá! 🎉", "theme": "theme-pink", "type": "sound", "action": "", "target": "tada.wav", "icon": "sound"},
+        {"id": "btn_12", "title": "Calculadora", "theme": "theme-util", "type": "app", "action": "", "target": "calc", "icon": "calc"}
+    ]
+    save_buttons(defaults)
+    return defaults
+
+def save_buttons(buttons):
+    try:
+        with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+            json.dump(buttons, f, indent=2, ensure_ascii=False)
+        return True
+    except Exception:
+        return False
+
+def list_sounds():
+    if not os.path.exists(SOUNDS_DIR):
+        return []
+    valid_exts = {".mp3", ".wav", ".wma", ".ogg", ".m4a", ".aac"}
+    files = []
+    try:
+        for f in os.listdir(SOUNDS_DIR):
+            if os.path.splitext(f)[1].lower() in valid_exts:
+                files.append(f)
+    except Exception:
+        pass
+    return sorted(files)
+
+sound_counter = 0
+
+def play_sound(filename):
+    global sound_counter
+    if not filename:
+        return False
+    filepath = os.path.join(SOUNDS_DIR, filename)
+    if not os.path.exists(filepath):
+        if os.path.exists(filename):
+            filepath = filename
+        else:
+            return False
+
+    filepath = os.path.normpath(filepath)
+    ext = os.path.splitext(filepath)[1].lower()
+    if ext == ".wav":
+        try:
+            import winsound
+            winsound.PlaySound(filepath, winsound.SND_FILENAME | winsound.SND_ASYNC)
+            return True
+        except Exception:
+            pass
+
+    try:
+        # Cerrar dispositivos previos para liberar locks sobre archivos de audio
+        ctypes.windll.winmm.mciSendStringW('close all', None, 0, None)
+        sound_counter = (sound_counter + 1) % 50
+        alias = f"sd_snd_{sound_counter}"
+        ret = ctypes.windll.winmm.mciSendStringW(f'open "{filepath}" type mpegvideo alias {alias}', None, 0, None)
+        if ret == 0:
+            ctypes.windll.winmm.mciSendStringW(f'play {alias} from 0', None, 0, None)
+            return True
+    except Exception:
+        pass
+    return False
+
+cached_apps = None
+
+def list_installed_apps():
+    global cached_apps
+    if cached_apps is not None:
+        return cached_apps
+
+    builtin = [
+        {"name": "🔢 Calculadora", "target": "calc", "icon": "calc", "category": "Herramientas de Windows"},
+        {"name": "📝 Bloc de Notas", "target": "notepad", "icon": "📝", "category": "Herramientas de Windows"},
+        {"name": "🎨 Paint", "target": "mspaint", "icon": "🎨", "category": "Herramientas de Windows"},
+        {"name": "📁 Explorador de Archivos", "target": "explorer", "icon": "📁", "category": "Herramientas de Windows"},
+        {"name": "💻 Terminal / PowerShell", "target": "powershell", "icon": "terminal", "category": "Herramientas de Windows"},
+        {"name": "⚙️ Configuración de Windows", "target": "ms-settings:", "icon": "⚙️", "category": "Herramientas de Windows"},
+        {"name": "📊 Administrador de Tareas", "target": "taskmgr", "icon": "📊", "category": "Herramientas de Windows"},
+    ]
+    seen = {b["name"].lower(): True for b in builtin}
+    
+    dirs = [
+        r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs",
+        os.path.expandvars(r"%APPDATA%\Microsoft\Windows\Start Menu\Programs")
+    ]
+    ignore_words = {"uninstall", "desinstalar", "help", "ayuda", "readme", "leeme", "documentation", "manual", "website", "sitio", "web", "url"}
+    installed = []
+
+    for d in dirs:
+        if os.path.exists(d):
+            for root, _, files in os.walk(d):
+                for f in files:
+                    if f.lower().endswith(".lnk"):
+                        name = f[:-4]
+                        low = name.lower()
+                        if any(w in low for w in ignore_words):
+                            continue
+                        if low in seen:
+                            continue
+                        seen[low] = True
+                        full_p = os.path.join(root, f)
+                        # Sugerir icono visual apropiado
+                        icon = "🚀"
+                        if any(k in low for k in ["code", "visual studio", "sublime", "dev", "git"]):
+                            icon = "code"
+                        elif any(k in low for k in ["discord", "chat", "slack", "teams"]):
+                            icon = "💬"
+                        elif any(k in low for k in ["spotify", "music", "audio", "itunes", "vlc"]):
+                            icon = "🎵"
+                        elif any(k in low for k in ["game", "steam", "epic", "riot", "blizzard", "play", "juego"]):
+                            icon = "🎮"
+                        elif any(k in low for k in ["chrome", "edge", "firefox", "brave", "opera", "browser"]):
+                            icon = "🌐"
+                        elif any(k in low for k in ["obs", "stream", "cam", "video", "twitch"]):
+                            icon = "📺"
+                        installed.append({
+                            "name": name,
+                            "target": full_p,
+                            "icon": icon,
+                            "category": "Programas Instalados"
+                        })
+    installed.sort(key=lambda x: x["name"].lower())
+    cached_apps = builtin + installed
+    return cached_apps
+
+def launch_app(target):
+    if not target:
+        return False
+    target = target.strip()
+    if target.lower() == "code":
+        code_path = os.path.expandvars(r"%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe")
+        if os.path.exists(code_path):
+            target = code_path
+
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    startupinfo.wShowWindow = 0
+    try:
+        startupinfo.lpDesktop = r"WinSta0\Default"
+    except Exception:
+        pass
+
+    # Metodo 1: audio_tool.exe nativo (.NET Process.Start con resolucion de .lnk y sesion interactiva)
+    if os.path.exists(AUDIO_TOOL_PATH):
+        try:
+            subprocess.Popen([AUDIO_TOOL_PATH, "launch", target], startupinfo=startupinfo)
+            return True
+        except Exception:
+            pass
+
+    # Metodo 2: os.startfile nativo
+    try:
+        os.startfile(target)
+        return True
+    except Exception:
+        pass
+
+    # Metodo 3: ShellExecuteW
+    try:
+        ret = ctypes.windll.shell32.ShellExecuteW(0, "open", target, None, None, 1)
+        if ret > 32:
+            return True
+    except Exception:
+        pass
+
+    # Metodo 4: cmd start
+    try:
+        subprocess.Popen(f'cmd.exe /c start "" "{target}"', shell=True, startupinfo=startupinfo)
+        return True
+    except Exception:
+        pass
+
+    return False
+
+def handle_action_request(data):
+    action_type = data.get("type", "")
+    action = data.get("action", "")
+    target = data.get("target", "")
+
+    if action_type == "sound":
+        return play_sound(target)
+
+    elif action_type == "url":
+        if target:
+            if not target.startswith("http://") and not target.startswith("https://"):
+                target = "https://" + target
+            return launch_app(target)
+
+    elif action_type == "app":
+        if target:
+            return launch_app(target)
+
+    elif action_type == "system":
+        execute_action(action)
+        return True
+
+    if action:
+        execute_action(action)
+        return True
+
+    return False
+
 def execute_action(action):
     if action == "vol_up":
         run_audio_tool("up")
@@ -120,17 +347,13 @@ def execute_action(action):
     elif action == "prev_track":
         run_audio_tool("prev")
     elif action == "open_code":
-        code_path = os.path.expandvars(r"%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe")
-        if os.path.exists(code_path):
-            os.startfile(code_path)
-        else:
-            subprocess.Popen("start code", shell=True, creationflags=CREATE_NO_WINDOW)
+        launch_app("code")
     elif action == "open_terminal":
-        subprocess.Popen("start powershell", shell=True, creationflags=CREATE_NO_WINDOW)
+        launch_app("powershell")
     elif action == "open_browser":
-        os.startfile("http://localhost:3000")
+        launch_app("http://localhost:5000")
     elif action == "open_calc":
-        subprocess.Popen("calc", creationflags=CREATE_NO_WINDOW)
+        launch_app("calc")
     elif action == "lock_pc":
         ctypes.windll.user32.LockWorkStation()
 
@@ -145,6 +368,33 @@ class StreamDeckHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(get_stats()).encode("utf-8"))
             return
 
+        if self.path == "/api/buttons":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.end_headers()
+            self.wfile.write(json.dumps(load_buttons(), ensure_ascii=False).encode("utf-8"))
+            return
+
+        if self.path == "/api/sounds":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.end_headers()
+            self.wfile.write(json.dumps(list_sounds(), ensure_ascii=False).encode("utf-8"))
+            return
+
+        if self.path == "/api/apps":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.end_headers()
+            self.wfile.write(json.dumps(list_installed_apps(), ensure_ascii=False).encode("utf-8"))
+            return
+
         if self.path == "/" or self.path == "/index.html":
             if os.path.exists(INDEX_HTML_PATH):
                 with open(INDEX_HTML_PATH, "rb") as f:
@@ -154,7 +404,6 @@ class StreamDeckHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Access-Control-Allow-Origin", "*")
-            # Cache busting estricto para evitar que el navegador guarde versiones viejas
             self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
             self.send_header("Pragma", "no-cache")
             self.send_header("Expires", "0")
@@ -165,22 +414,88 @@ class StreamDeckHandler(http.server.BaseHTTPRequestHandler):
         self.send_response(404)
         self.end_headers()
 
-    def do_POST(self):
-        if self.path == "/api/action":
-            content_length = int(self.headers.get("Content-Length", 0))
-            body = self.rfile.read(content_length).decode("utf-8")
-            try:
-                payload = json.loads(body)
-                execute_action(payload.get("action"))
-                res = {"status": "ok"}
-            except Exception as e:
-                res = {"status": "error", "message": str(e)}
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
 
+    def do_POST(self):
+        content_length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
+        try:
+            payload = json.loads(body)
+        except Exception:
+            payload = {}
+
+        if self.path == "/api/action":
+            success = handle_action_request(payload)
+            print(f"[ACTION] {payload} -> success={success}", flush=True)
+            res = {"status": "ok" if success else "error"}
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             self.wfile.write(json.dumps(res).encode("utf-8"))
+            return
+
+        if self.path == "/api/buttons":
+            buttons = payload.get("buttons", payload)
+            if isinstance(buttons, list):
+                save_buttons(buttons)
+                res = {"status": "ok"}
+            else:
+                res = {"status": "error", "message": "Invalid buttons format"}
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps(res).encode("utf-8"))
+            return
+
+        if self.path == "/api/upload_sound":
+            filename = payload.get("filename", "")
+            b64data = payload.get("data", "")
+            if filename and b64data:
+                clean_name = os.path.basename(filename)
+                clean_name = re.sub(r'[<>:"/\\|?*]', '_', clean_name)
+                ext = os.path.splitext(clean_name)[1].lower()
+                valid_exts = {".mp3", ".wav", ".wma", ".ogg", ".m4a", ".aac"}
+                if ext in valid_exts:
+                    dest_path = os.path.join(SOUNDS_DIR, clean_name)
+                    already_exists = os.path.exists(dest_path)
+                    try:
+                        import base64
+                        file_bytes = base64.b64decode(b64data)
+                        # Liberar locks previos sobre mci
+                        ctypes.windll.winmm.mciSendStringW('close all', None, 0, None)
+                        try:
+                            with open(dest_path, "wb") as f:
+                                f.write(file_bytes)
+                        except PermissionError:
+                            # Si ya existe en disco y esta bloqueado por reproduccion, se reutiliza
+                            pass
+                        
+                        msg = f"El archivo '{clean_name}' ya existe en la carpeta de sonidos y ha sido seleccionado." if already_exists else f"'{clean_name}' copiado con éxito a la carpeta sounds/."
+                        res = {
+                            "status": "ok",
+                            "filename": clean_name,
+                            "sounds": list_sounds(),
+                            "already_existed": already_exists,
+                            "message": msg
+                        }
+                    except Exception as e:
+                        res = {"status": "error", "message": f"Error guardando archivo: {e}"}
+                else:
+                    res = {"status": "error", "message": "Formato no compatible (.mp3, .wav, .wma, .ogg, .m4a)"}
+            else:
+                res = {"status": "error", "message": "Datos incompletos"}
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
             return
 
         self.send_response(404)
